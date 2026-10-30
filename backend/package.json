@@ -1,0 +1,52 @@
+{
+  "name": "peerlearn-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PeerLearn REST API (SAD CMP-02 to CMP-11)",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "migrate": "node scripts/migrate.js",
+    "seed:demo": "node scripts/seed-demo.js",
+    "seed:perf": "node scripts/seed-perf.js",
+    "test": "jest --runInBand --coverage",
+    "test:unit": "jest --runInBand tests/unit",
+    "load": "node scripts/load-test.js",
+    "audit": "npm audit --audit-level=high"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^10.2.1",
+    "pg": "^8.12.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "globalSetup": "./tests/globalSetup.js",
+    "testTimeout": 60000,
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/server.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "lines": 70
+      }
+    },
+    "coverageReporters": [
+      "text-summary",
+      "lcov"
+    ]
+  }
+}
