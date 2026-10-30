@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:16        # same major version as production (Test Plan section 8)
+        image: postgres:16 # same major version as production (Test Plan section 8)
         env: { POSTGRES_PASSWORD: postgres }
         ports: ["5432:5432"]
         options: >-
@@ -17,11 +17,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: npm, cache-dependency-path: backend/package-lock.json }
+        with:
+          {
+            node-version: 22,
+            cache: npm,
+            cache-dependency-path: backend/package-lock.json,
+          }
       - run: npm ci
-      - name: Unit and integration tests with coverage (NFR-08: lines >= 70%)
+      - name: "Unit and integration tests with coverage (NFR-08: lines >= 70%)"
         run: npm test
-        env: { NODE_ENV: test, TEST_ADMIN_URL: "postgres://postgres:postgres@localhost:5432/postgres" }
+        env:
+          {
+            NODE_ENV: test,
+            TEST_ADMIN_URL: "postgres://postgres:postgres@localhost:5432/postgres",
+          }
       - name: Dependency audit (no high or critical issues)
         run: npm audit --audit-level=high
       - uses: actions/upload-artifact@v4
@@ -33,7 +42,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: npm, cache-dependency-path: frontend/package-lock.json }
+        with:
+          {
+            node-version: 22,
+            cache: npm,
+            cache-dependency-path: frontend/package-lock.json,
+          }
       - run: npm ci
       - run: npm run build
       - run: npm audit --audit-level=high
