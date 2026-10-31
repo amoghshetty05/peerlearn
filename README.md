@@ -45,6 +45,35 @@ cd ../frontend && npm install && npm run dev    # http://localhost:5173 (proxies
 ```
 Demo accounts after `seed:demo`: learners `asha@pes.edu`, `vikram@pes.edu`; tutors `meera@`, `rohan@`, `nisha@`, `arjun@pes.edu`; all with password `Password123`.
 
+## DevOps pipeline
+
+Every tool the course requires is used, and each step leaves evidence in the repository or on Docker Hub.
+
+| Tool | Where it is used | Evidence |
+|---|---|---|
+| Git | All source, documents and videos are version-controlled; one branch per change | Commit history |
+| GitHub | Repository, pull requests reviewed and merged by the repo owner, Project board with the backlog, `main` protected by a ruleset | Pull requests, Projects tab, Settings > Rules |
+| GitHub Actions | `.github/workflows/ci.yml`: `backend` (tests, 70% coverage gate, `npm audit`) and `frontend` (build, `npm audit`) on every PR; `docker` and `kubernetes` on every push to `main` | Actions tab |
+| Docker | `backend/Dockerfile`, `frontend/Dockerfile`, `docker-compose.yml` for the full local stack | `docker compose up --build` |
+| Docker Hub | The `docker` job pushes `<user>/peerlearn-api` and `<user>/peerlearn-web`, tagged with the commit SHA and `latest` | Docker Hub repositories |
+| Kubernetes | `k8s/` manifests (namespace, PostgreSQL with a volume, migration Job, API, nginx web), applied by `k8s/deploy.sh`; the `kubernetes` job deploys the Docker Hub images to a kind cluster and logs in through nginx over HTTPS | `kubernetes` job log in the Actions tab |
+
+Pipeline on every push to `main`: tests pass, then images are built and pushed to Docker Hub, then they are deployed to Kubernetes and smoke-tested.
+
+### One-time setup for Docker Hub
+1. Create a Docker Hub account and an access token (Account settings > Personal access tokens, Read & Write).
+2. In GitHub: Settings > Secrets and variables > Actions > New repository secret. Add `DOCKERHUB_USERNAME` (lower case) and `DOCKERHUB_TOKEN`.
+3. In `k8s/kustomization.yaml`, replace `DOCKERHUB_USERNAME` with the same username.
+
+### Run on Kubernetes locally (Docker Desktop)
+Turn on Kubernetes in Docker Desktop (Settings > Kubernetes > Enable Kubernetes), then from the repository root in Git Bash:
+```bash
+cp .env.example .env                       # then change the secrets
+MSYS_NO_PATHCONV=1 ./infra/gen-certs.sh    # MSYS_NO_PATHCONV is needed only in Git Bash on Windows
+sh k8s/deploy.sh
+```
+Open **https://localhost** (accept the self-signed certificate). Stop `docker compose` first if it is running, because both use ports 80 and 443. Remove everything with `kubectl delete namespace peerlearn`.
+
 ## Tests
 
 ```bash
@@ -79,7 +108,7 @@ Result on the last run here: **61 tests passing, 94.9% line coverage**, load tes
 | NFR-01 bcrypt cost >= 10 | `services/auth.js`, `config.js` | TC-12 |
 | NFR-03 matching under 2 s | `dal/tutors.js` (indexed query) | TC-13 |
 | NFR-04 100 req/min/user | `middleware/rateLimiter.js` | TC-14 |
-| NFR-05 three clicks, NFR-07 360 px | `frontend/` | TC-17 (manual, see below) |
+| NFR-05 three clicks and 360 px | `frontend/` | TC-17 (manual, see below) |
 | NFR-06 audit log retained, append-only | `services/audit.js`, `db/schema.sql`, `scripts/migrate.js` | TC-16 |
 | NFR-08 coverage >= 70% | `package.json` jest threshold, CI | CI |
 | SR-01 HTTPS, TLS 1.2+ | `infra/nginx.conf`, `middleware/enforceHttps.js` | TC-19, `infra/verify-tls.sh` |

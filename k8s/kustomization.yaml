@@ -1,0 +1,19 @@
+# Applied with: kubectl apply -k k8s   (k8s/deploy.sh does this in the right order)
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: peerlearn
+resources:
+  - namespace.yaml
+  - postgres.yaml
+  - migrate-job.yaml
+  - api.yaml
+  - web.yaml
+# Images come from Docker Hub. Replace DOCKERHUB_USERNAME with your Docker Hub username (lower case).
+# CI replaces it automatically and pins the tag to the commit it just built.
+images:
+  - name: peerlearn-api
+    newName: amoghshetty05/peerlearn-api
+    newTag: latest
+  - name: peerlearn-web
+    newName: amoghshetty05/peerlearn-web
+    newTag: latest
