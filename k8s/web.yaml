@@ -1,0 +1,46 @@
+# CMP-01 frontend served by nginx, which also ends HTTPS (SR-01) and proxies /api/ to the API.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  labels: { app: web }
+spec:
+  replicas: 2                         # stateless, so it can run more than one copy
+  selector:
+    matchLabels: { app: web }
+  template:
+    metadata:
+      labels: { app: web }
+    spec:
+      containers:
+        - name: web
+          image: peerlearn-web
+          ports:
+            - containerPort: 80
+            - containerPort: 443
+          readinessProbe:
+            tcpSocket: { port: 443 }
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          volumeMounts:
+            - name: certs
+              mountPath: /etc/nginx/certs
+              readOnly: true
+      volumes:
+        - name: certs
+          secret:
+            secretName: web-tls
+            items:                     # nginx.conf expects server.crt and server.key
+              - { key: tls.crt, path: server.crt }
+              - { key: tls.key, path: server.key }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  type: LoadBalancer                  # Docker Desktop maps this to https://localhost
+  selector: { app: web }
+  ports:
+    - { name: http, port: 80, targetPort: 80 }
+    - { name: https, port: 443, targetPort: 443 }

@@ -1,0 +1,57 @@
+# CMP-12 PostgreSQL database, with a persistent volume so data survives pod restarts.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-data
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+  labels: { app: db }
+spec:
+  replicas: 1
+  strategy: { type: Recreate }        # only one pod may use the volume at a time
+  selector:
+    matchLabels: { app: db }
+  template:
+    metadata:
+      labels: { app: db }
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: peerlearn
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: peerlearn-secrets, key: POSTGRES_PASSWORD } }
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          readinessProbe:
+            exec: { command: ["pg_isready", "-U", "postgres", "-d", "peerlearn"] }
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: data
+          persistentVolumeClaim: { claimName: db-data }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db                            # the API and migration job connect to host "db"
+spec:
+  selector: { app: db }
+  ports:
+    - port: 5432
+      targetPort: 5432

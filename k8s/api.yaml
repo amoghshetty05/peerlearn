@@ -1,0 +1,61 @@
+# CMP-02 to CMP-11: the Express API. One replica, because the background jobs
+# (48-hour expiry, reminders, email retry) must run in exactly one place.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  labels: { app: api }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: api }
+  template:
+    metadata:
+      labels: { app: api }
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: postgres:16-alpine
+          command: ["sh", "-c", "until pg_isready -h db -U postgres -d peerlearn; do echo waiting for db; sleep 2; done"]
+      containers:
+        - name: api
+          image: peerlearn-api
+          ports:
+            - containerPort: 4000
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: ENFORCE_HTTPS                 # SR-01: nginx terminates TLS and sets X-Forwarded-Proto
+              value: "true"
+            - name: APP_DB_PASSWORD
+              valueFrom: { secretKeyRef: { name: peerlearn-secrets, key: APP_DB_PASSWORD } }
+            - name: DATABASE_URL                  # restricted role: cannot edit or delete audit_log
+              value: postgres://peerlearn_app:$(APP_DB_PASSWORD)@db:5432/peerlearn
+            - name: JWT_SECRET
+              valueFrom: { secretKeyRef: { name: peerlearn-secrets, key: JWT_SECRET } }
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 4000
+              httpHeaders:
+                - { name: X-Forwarded-Proto, value: https }
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4000
+              httpHeaders:
+                - { name: X-Forwarded-Proto, value: https }
+            initialDelaySeconds: 20
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api                           # nginx.conf proxies /api/ to http://api:4000
+spec:
+  selector: { app: api }
+  ports:
+    - port: 4000
+      targetPort: 4000
