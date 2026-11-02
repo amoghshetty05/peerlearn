@@ -1,0 +1,346 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for src/routes/index.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">src/routes</a> index.js</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">92.3% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>84/91</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>4/4</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">85.29% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>29/34</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">96.92% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>63/65</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line high'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">927x</span>
+<span class="cline-any cline-yes">174x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">26x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">102x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">342x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">29x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">306x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// CMP-02 API Layer. Every protected route runs: rate limiter (global) -&gt; authenticate -&gt; authorize -&gt; validate -&gt; controller.
+const express = require('express');
+const authenticate = require('../middleware/authenticate');
+const authorize = require('../middleware/authorize');
+const validate = require('../middleware/validate');
+const S = require('../schemas');
+const ser = require('../serializers');
+const { E } = require('../errors');
+&nbsp;
+const auth = require('../services/auth');
+const profile = require('../services/profile');
+const matching = require('../services/matching');
+const session = require('../services/session');
+const group = require('../services/group');
+const moderation = require('../services/moderation');
+const notification = require('../services/notification');
+const dashboard = require('../services/dashboard');
+&nbsp;
+const router = express.Router();
+const h = (fn) =&gt; (req, res, next) =&gt; Promise.resolve(fn(req, res)).catch(next); // async error bridge
+const guard = (...roles) =&gt; (roles.length ? [authenticate, authorize(...roles)] : [authenticate]);
+const LT = ['learner', 'tutor'];
+&nbsp;
+// ---- API-01 / API-02: public ----
+router.post('/auth/register', validate({ body: S.register }), h(async (req, res) =&gt; res.status(201).json(await auth.register(req.body))));
+router.post('/auth/login', validate({ body: S.login }), h(async (req, res) =&gt; res.json(await auth.login(req.body))));
+router.post('/auth/logout', ...guard(), h(async (req, res) =&gt; { await auth.logout(req.user.id, req.token); res.status(204).end(); }));
+&nbsp;
+// ---- own account (supporting endpoints) ----
+router.get('/users/me', ...guard(), h(async (req, res) =&gt; res.json(ser.selfUser(req.user))));
+router.put('/users/me', ...guard(), validate({ body: S.updateMe }), h(async (req, res) =&gt; res.json(await profile.updateMe(req.user.id, req.body))));
+router.get('/users/:id', ...guard(), validate({ params: S.idParam }), h(async (req, res) =&gt; res.json(await profile.viewUser(req.user, req.params.id))));
+&nbsp;
+// ---- API-03 / API-04: tutor profile ----
+router.get('/tutors/me', ...guard('tutor'), h(<span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; <span class="cstat-no" title="statement not covered" >res.json(await profile.myTutorProfile(req.user.id)))</span>);
+router.post('/tutors/me/subjects', ...guard('tutor'), validate({ body: S.subjectCreate }),
+  h(async (req, res) =&gt; res.status(201).json(await profile.addSubject(req.user.id, req.body))));
+router.put('/tutors/me/subjects/:id', ...guard('tutor'), validate({ params: S.idParam, body: S.subjectUpdate }),
+  h(async (req, res) =&gt; res.json(await profile.updateSubject(req.user.id, req.params.id, req.body))));
+router.delete('/tutors/me/subjects/:id', ...guard('tutor'), validate({ params: S.idParam }),
+  h(async (req, res) =&gt; { await profile.deleteSubject(req.user.id, req.params.id); res.status(204).end(); }));
+router.post('/tutors/me/availability', ...guard('tutor'), validate({ body: S.slotCreate }),
+  h(async (req, res) =&gt; res.status(201).json(await profile.addSlot(req.user.id, req.body))));
+router.delete('/tutors/me/availability/:id', ...guard('tutor'), validate({ params: S.idParam }),
+  h(<span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; { <span class="cstat-no" title="statement not covered" >await profile.deleteSlot(req.user.id, req.params.id); <span class="cstat-no" title="statement not covered" ></span>res.status(204).end(); </span>}));
+&nbsp;
+// ---- API-05 / API-06: help requests and matches ----
+router.post('/requests', ...guard('learner'), validate({ body: S.helpRequest }),
+  h(async (req, res) =&gt; res.status(201).json(await matching.createRequest(req.user.id, req.body))));
+router.get('/requests', ...guard('learner'), h(<span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; <span class="cstat-no" title="statement not covered" >res.json(await matching.listRequests(req.user.id)))</span>);
+router.get('/requests/:id/matches', ...guard('learner'), validate({ params: S.idParam }),
+  h(async (req, res) =&gt; res.json(await matching.getMatches(req.user.id, req.params.id))));
+&nbsp;
+// ---- API-07 / API-08 / API-09: sessions ----
+router.post('/sessions', ...guard('learner'), validate({ body: S.sessionCreate }),
+  h(async (req, res) =&gt; res.status(201).json(await session.request(req.user, req.body))));
+router.get('/sessions', ...guard('learner', 'tutor'), validate({ query: S.sessionList }),
+  h(<span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; <span class="cstat-no" title="statement not covered" >res.json(await session.list(req.user, req.query.status)))</span>);
+router.patch('/sessions/:id', ...guard('tutor'), validate({ params: S.idParam, body: S.sessionPatch }),
+  h(async (req, res) =&gt; res.json(await session.respond(req.user, req.params.id, req.body.status))));
+router.post('/sessions/:id/rating', ...guard('learner'), validate({ params: S.idParam, body: S.rating }),
+  h(async (req, res) =&gt; res.status(201).json(await session.rate(req.user, req.params.id, req.body))));
+&nbsp;
+// ---- API-10: study groups ----
+router.post('/groups', ...guard(...LT), validate({ body: S.groupCreate }), h(async (req, res) =&gt; res.status(201).json(await group.create(req.user, req.body))));
+router.get('/groups', ...guard(...LT), validate({ query: S.groupList }), h(async (req, res) =&gt; res.json(await group.list(req.user, req.query.subject))));
+router.get('/groups/:id', ...guard(...LT), validate({ params: S.idParam }), h(async (req, res) =&gt; res.json(await group.get(req.user, req.params.id))));
+router.post('/groups/:id/join', ...guard(...LT), validate({ params: S.idParam }), h(async (req, res) =&gt; res.json(await group.join(req.user, req.params.id))));
+router.delete('/groups/:id/join', ...guard(...LT), validate({ params: S.idParam }), h(async (req, res) =&gt; res.json(await group.leave(req.user, req.params.id))));
+&nbsp;
+// ---- API-11: notifications ----
+router.get('/notifications', ...guard(...LT), validate({ query: S.notificationList }),
+  h(async (req, res) =&gt; res.json((await notification.list(req.user.id, req.query.unread === 'true')).map(ser.notification))));
+router.patch('/notifications/:id', ...guard(...LT), validate({ params: S.idParam }),
+  h(async (req, res) =&gt; { if (!(await notification.markRead(req.user.id, req.params.id))) throw E.notFound(); res.status(204).end(); }));
+router.post('/notifications/read-all', ...guard(...LT), h(<span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; { <span class="cstat-no" title="statement not covered" >await notification.markAllRead(req.user.id); <span class="cstat-no" title="statement not covered" ></span>res.status(204).end(); </span>}));
+&nbsp;
+// ---- API-12 / API-13: moderation ----
+router.post('/reports', ...guard(...LT), validate({ body: S.report }), h(async (req, res) =&gt; res.status(201).json(await moderation.report(req.user, req.body))));
+router.get('/admin/reports', ...guard('admin'), validate({ query: S.reportList }), h(async (req, res) =&gt; res.json(await moderation.list(req.query.status))));
+router.patch('/admin/reports/:id', ...guard('admin'), validate({ params: S.idParam, body: S.adminPatch }),
+  h(async (req, res) =&gt; res.json(await moderation.resolve(req.user, req.params.id, req.body.action))));
+&nbsp;
+// ---- API-14: dashboard ----
+router.get('/dashboard', ...guard(...LT), h(async (req, res) =&gt; res.json(await dashboard.get(req.user))));
+&nbsp;
+module.exports = router;
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2026-10-31T04:28:37.274Z
+            </div>
+        <script src="../../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../../sorter.js"></script>
+        <script src="../../block-navigation.js"></script>
+    </body>
+</html>
+    
