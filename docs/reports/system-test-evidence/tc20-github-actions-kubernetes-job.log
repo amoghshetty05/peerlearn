@@ -1,0 +1,241 @@
+﻿2026-10-31T04:39:01.2323567Z Current runner version: '2.338.2'
+2026-10-31T04:39:01.2348319Z ##[group]Runner Image Provisioner
+2026-10-31T04:39:01.2349188Z Hosted Compute Agent
+2026-10-31T04:39:01.2349773Z Version: 20261021.618
+2026-10-31T04:39:01.2350531Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-10-31T04:39:01.2351499Z Build Date: 2026-10-21T00:45:21Z
+2026-10-31T04:39:01.2352283Z Worker ID: {2e5b3143-9cee-4f8b-8c67-3c7551748780}
+2026-10-31T04:39:01.2353016Z Region: canadaeast
+2026-10-31T04:39:01.2353569Z Cloud: Azure
+2026-10-31T04:39:01.2354209Z ##[endgroup]
+2026-10-31T04:39:01.2355943Z ##[group]Operating System
+2026-10-31T04:39:01.2356672Z Ubuntu
+2026-10-31T04:39:01.2357225Z 26.04.1
+2026-10-31T04:39:01.2357802Z LTS
+2026-10-31T04:39:01.2358398Z ##[endgroup]
+2026-10-31T04:39:01.2358968Z ##[group]Runner Image
+2026-10-31T04:39:01.2359902Z Image: ubuntu-26.04
+2026-10-31T04:39:01.2360532Z Version: 20261025.179.1
+2026-10-31T04:39:01.2362122Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261025.179/images/ubuntu/Ubuntu2604-Readme.md
+2026-10-31T04:39:01.2363701Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261025.179
+2026-10-31T04:39:01.2364717Z ##[endgroup]
+2026-10-31T04:39:01.2366053Z ##[group]GITHUB_TOKEN Permissions
+2026-10-31T04:39:01.2368292Z Contents: read
+2026-10-31T04:39:01.2368909Z Metadata: read
+2026-10-31T04:39:01.2369454Z Packages: read
+2026-10-31T04:39:01.2370078Z ##[endgroup]
+2026-10-31T04:39:01.2372644Z Secret source: Actions
+2026-10-31T04:39:01.2373707Z Cache mode: write
+2026-10-31T04:39:01.2374644Z Prepare workflow directory
+2026-10-31T04:39:01.2783037Z Prepare all required actions
+2026-10-31T04:39:01.2835132Z Getting action download info
+2026-10-31T04:39:01.5095910Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-31T04:39:01.6236098Z Download action repository 'helm/kind-action@v1' (SHA:ef37e7f390d99f746eb8b610417061a60e82a6cc)
+2026-10-31T04:39:01.8831593Z Complete job name: kubernetes
+2026-10-31T04:39:01.9724809Z ##[group]Run actions/checkout@v4
+2026-10-31T04:39:01.9725722Z with:
+2026-10-31T04:39:01.9726261Z   repository: ***/peerlearn
+2026-10-31T04:39:01.9729908Z   token: ***
+2026-10-31T04:39:01.9730356Z   ssh-strict: true
+2026-10-31T04:39:01.9730802Z   ssh-user: git
+2026-10-31T04:39:01.9731479Z   persist-credentials: true
+2026-10-31T04:39:01.9731984Z   clean: true
+2026-10-31T04:39:01.9732856Z   sparse-checkout-cone-mode: true
+2026-10-31T04:39:01.9733817Z   fetch-depth: 1
+2026-10-31T04:39:01.9734420Z   fetch-tags: false
+2026-10-31T04:39:01.9734882Z   show-progress: true
+2026-10-31T04:39:01.9735366Z   lfs: false
+2026-10-31T04:39:01.9735799Z   submodules: false
+2026-10-31T04:39:01.9736269Z   set-safe-directory: true
+2026-10-31T04:39:01.9736786Z   allow-unsafe-pr-checkout: false
+2026-10-31T04:39:01.9737691Z ##[endgroup]
+2026-10-31T04:39:02.3079399Z Syncing repository: ***/peerlearn
+2026-10-31T04:39:02.3082702Z ##[group]Getting Git version info
+2026-10-31T04:39:02.3084196Z Working directory is '/home/runner/work/peerlearn/peerlearn'
+2026-10-31T04:39:02.3086345Z [command]/usr/bin/git version
+2026-10-31T04:39:02.3122484Z git version 2.56.0
+2026-10-31T04:39:02.3154468Z ##[endgroup]
+2026-10-31T04:39:02.3179802Z Temporarily overriding HOME='/home/runner/work/_temp/5149b5ba-bcee-4843-a120-ace40e25ab5b' before making global git config changes
+2026-10-31T04:39:02.3183598Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-31T04:39:02.3233284Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/peerlearn/peerlearn
+2026-10-31T04:39:02.3299737Z Deleting the contents of '/home/runner/work/peerlearn/peerlearn'
+2026-10-31T04:39:02.3302956Z ##[group]Initializing the repository
+2026-10-31T04:39:02.3304936Z [command]/usr/bin/git init /home/runner/work/peerlearn/peerlearn
+2026-10-31T04:39:02.3435604Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-31T04:39:02.3437727Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-31T04:39:02.3439287Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-31T04:39:02.3440326Z hint: call:
+2026-10-31T04:39:02.3440895Z hint:
+2026-10-31T04:39:02.3442209Z hint: 	git config --global init.defaultBranch <name>
+2026-10-31T04:39:02.3443066Z hint:
+2026-10-31T04:39:02.3443837Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-31T04:39:02.3445128Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-31T04:39:02.3446320Z hint:
+2026-10-31T04:39:02.3446905Z hint: 	git branch -m <name>
+2026-10-31T04:39:02.3447558Z hint:
+2026-10-31T04:39:02.3448397Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-31T04:39:02.3461313Z Initialized empty Git repository in /home/runner/work/peerlearn/peerlearn/.git/
+2026-10-31T04:39:02.3475319Z [command]/usr/bin/git remote add origin https://github.com/***/peerlearn
+2026-10-31T04:39:02.3535282Z ##[endgroup]
+2026-10-31T04:39:02.3536940Z ##[group]Disabling automatic garbage collection
+2026-10-31T04:39:02.3540588Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-31T04:39:02.3578451Z ##[endgroup]
+2026-10-31T04:39:02.3580087Z ##[group]Setting up auth
+2026-10-31T04:39:02.3587297Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-31T04:39:02.3640417Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-31T04:39:02.4196539Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-31T04:39:02.4233467Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-31T04:39:02.4529695Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-31T04:39:02.4568012Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-31T04:39:02.4845306Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-31T04:39:02.4886912Z ##[endgroup]
+2026-10-31T04:39:02.4888718Z ##[group]Fetching the repository
+2026-10-31T04:39:02.4899245Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +32855fc9d5de7862e0e998c7dfe3bfe8f434f55b:refs/remotes/origin/main
+2026-10-31T04:39:02.8856201Z From https://github.com/***/peerlearn
+2026-10-31T04:39:02.8871769Z  * [new ref]         32855fc9d5de7862e0e998c7dfe3bfe8f434f55b -> origin/main
+2026-10-31T04:39:02.8877093Z ##[endgroup]
+2026-10-31T04:39:02.8878540Z ##[group]Determining the checkout info
+2026-10-31T04:39:02.8880118Z ##[endgroup]
+2026-10-31T04:39:02.8881393Z [command]/usr/bin/git sparse-checkout disable
+2026-10-31T04:39:02.8926292Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-31T04:39:02.8961527Z ##[group]Checking out the ref
+2026-10-31T04:39:02.8963170Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-10-31T04:39:02.9135561Z Switched to a new branch 'main'
+2026-10-31T04:39:02.9142509Z branch 'main' set up to track 'origin/main'.
+2026-10-31T04:39:02.9148881Z ##[endgroup]
+2026-10-31T04:39:02.9193128Z [command]/usr/bin/git log -1 --format=%H
+2026-10-31T04:39:02.9217279Z 32855fc9d5de7862e0e998c7dfe3bfe8f434f55b
+2026-10-31T04:39:02.9633420Z ##[group]Run helm/kind-action@v1
+2026-10-31T04:39:02.9634640Z with:
+2026-10-31T04:39:02.9635552Z   cluster_name: peerlearn
+2026-10-31T04:39:02.9636629Z   version: v0.31.0
+2026-10-31T04:39:02.9637566Z   wait: 60s
+2026-10-31T04:39:02.9638445Z   verbosity: 0
+2026-10-31T04:39:02.9639396Z   kubectl_version: v1.35.0
+2026-10-31T04:39:02.9640483Z   registry: false
+2026-10-31T04:39:02.9641681Z   registry_image: registry:2
+2026-10-31T04:39:02.9643049Z   registry_name: kind-registry
+2026-10-31T04:39:02.9644194Z   registry_port: 5000
+2026-10-31T04:39:02.9645234Z   registry_enable_delete: false
+2026-10-31T04:39:02.9646388Z   install_only: false
+2026-10-31T04:39:02.9647410Z   ignore_failed_clean: false
+2026-10-31T04:39:02.9648532Z   cloud_provider: false
+2026-10-31T04:39:02.9649541Z ##[endgroup]
+2026-10-31T04:39:03.0100205Z Installing kind...
+2026-10-31T04:39:03.0128443Z /opt/hostedtoolcache/kind/v0.31.0/amd64/kind/bin ~/work/peerlearn/peerlearn
+2026-10-31T04:39:03.3205290Z kind-linux-amd64: OK
+2026-10-31T04:39:03.3264029Z ~/work/peerlearn/peerlearn
+2026-10-31T04:39:03.3266033Z Adding kind directory to PATH...
+2026-10-31T04:39:03.3267343Z Installing kubectl...
+2026-10-31T04:39:03.3294650Z /opt/hostedtoolcache/kind/v0.31.0/amd64/kubectl/bin ~/work/peerlearn/peerlearn
+2026-10-31T04:39:03.7446625Z kubectl: OK
+2026-10-31T04:39:03.7482091Z ~/work/peerlearn/peerlearn
+2026-10-31T04:39:03.7482936Z Adding kubectl directory to PATH...
+2026-10-31T04:39:03.7517935Z kind v0.31.0 go1.25.5 linux/amd64
+2026-10-31T04:39:03.7944011Z Client Version: v1.35.0
+2026-10-31T04:39:03.7945303Z Kustomize Version: v5.7.1
+2026-10-31T04:39:03.7948189Z Creating kind cluster...
+2026-10-31T04:39:04.2196797Z Creating cluster "peerlearn" ...
+2026-10-31T04:39:04.2197999Z  • Ensuring node image (kindest/node:v1.35.0) 🖼  ...
+2026-10-31T04:39:09.8970075Z  ✓ Ensuring node image (kindest/node:v1.35.0) 🖼
+2026-10-31T04:39:09.8971414Z  • Preparing nodes 📦   ...
+2026-10-31T04:39:14.0026340Z  ✓ Preparing nodes 📦 
+2026-10-31T04:39:14.0401751Z  • Writing configuration 📜  ...
+2026-10-31T04:39:14.2598100Z  ✓ Writing configuration 📜
+2026-10-31T04:39:14.2598817Z  • Starting control-plane 🕹️  ...
+2026-10-31T04:39:22.2504615Z  ✓ Starting control-plane 🕹️
+2026-10-31T04:39:22.2505865Z  • Installing CNI 🔌  ...
+2026-10-31T04:39:22.5709423Z  ✓ Installing CNI 🔌
+2026-10-31T04:39:22.5710411Z  • Installing StorageClass 💾  ...
+2026-10-31T04:39:22.9619113Z  ✓ Installing StorageClass 💾
+2026-10-31T04:39:22.9940649Z  • Waiting ≤ 1m0s for control-plane = Ready ⏳  ...
+2026-10-31T04:39:41.4865607Z  ✓ Waiting ≤ 1m0s for control-plane = Ready ⏳
+2026-10-31T04:39:41.4879106Z  • Ready after 18s 💚
+2026-10-31T04:39:41.6807569Z Set kubectl context to "kind-peerlearn"
+2026-10-31T04:39:41.6808596Z You can now use your cluster with:
+2026-10-31T04:39:41.6809202Z 
+2026-10-31T04:39:41.6811948Z kubectl cluster-info --context kind-peerlearn
+2026-10-31T04:39:41.6812854Z 
+2026-10-31T04:39:41.6814310Z Have a question, bug, or feature request? Let us know! https://kind.sigs.k8s.io/#community 🙂
+2026-10-31T04:39:41.6939597Z ##[group]Run sed -i "s#DOCKERHUB_USERNAME#***#g; s#newTag: latest#newTag: 32855fc9d5de7862e0e998c7dfe3bfe8f434f55b#g" k8s/kustomization.yaml
+2026-10-31T04:39:41.6940762Z [36;1msed -i "s#DOCKERHUB_USERNAME#***#g; s#newTag: latest#newTag: 32855fc9d5de7862e0e998c7dfe3bfe8f434f55b#g" k8s/kustomization.yaml[0m
+2026-10-31T04:39:41.6977248Z shell: /usr/bin/bash -e {0}
+2026-10-31T04:39:41.6977563Z ##[endgroup]
+2026-10-31T04:39:41.7111949Z ##[group]Run cp .env.example .env && sh infra/gen-certs.sh
+2026-10-31T04:39:41.7112425Z [36;1mcp .env.example .env && sh infra/gen-certs.sh[0m
+2026-10-31T04:39:41.7141794Z shell: /usr/bin/bash -e {0}
+2026-10-31T04:39:41.7142052Z ##[endgroup]
+2026-10-31T04:39:41.7886969Z ..+......+++++++++++++++++++++++++++++++++++++++*....+......+......+......+..+++++++++++++++++++++++++++++++++++++++*..+..+.+..+............+...+...+..........+..+...+.+...+...+..+............+.+..+.......+...+............+...+...+.....+.........+....+..+.........+...+...+.......+...+..+.+...........+...+.+......+.....+.+...+......+...............+.........+...........+.............+.....+.......+...+.....+.+......+.....+.+........+.+.........+..+...+....+...+..+...+..................+.........+...+....+.....+...+...+.............+.........+...........+......+....+..+....+........+.............+...+..+.......+...+...+..+....+..............+.+........+......+......+.+..+.......+........+............+...+..........+..+....+..+.......+.....+...+.............+............+..................+.....+......+....+..+...+...............+......++++++
+2026-10-31T04:39:41.8792619Z .........+.......+...+++++++++++++++++++++++++++++++++++++++*....+...+...........+.......+..+.+..+...+.........+...+++++++++++++++++++++++++++++++++++++++*.....+....+...........+.......+..+......+....+.....+......+.............+..+..................+.......+..+.+..+...+................+.....+....+..............+..........+..+...+.+......+...+...+.....+..........+...+...........+....+..+.......+...........+.+...+...+.....+.........+......+.............+..+............+...+...+.+.....+....+.....+......+....+..+............+............+.+...............+...+......+...........+...+.+........+...+....+........+.......+......+........+....+.....+...+...+............+...+......+.............+.....+.............+...+.........+.....+.+.....+.+......+...+...........+.+..+...+.........+....+.........+.....+.+..+....+...........+.......+............+.........+.....+.+......+...+..+....+.....+......+..................................+.....+...+..........+...+.....+...+....+..+.........+.+......+........+.+...+...........+....+......+.....+..........+.........+..+......+.......+......+..+...+......+.+..+.......+......+...+..+...+.+.....................+........+....+......+..+.........+....+.....+.........+.......+...+.....+............+..........+......+........++++++
+2026-10-31T04:39:41.8851618Z -----
+2026-10-31T04:39:41.8875832Z Certificate written to infra/certs/
+2026-10-31T04:39:41.8941140Z ##[group]Run sh k8s/deploy.sh
+2026-10-31T04:39:41.8941661Z [36;1msh k8s/deploy.sh[0m
+2026-10-31T04:39:41.8995595Z shell: /usr/bin/bash -e {0}
+2026-10-31T04:39:41.8996022Z ##[endgroup]
+2026-10-31T04:39:42.1122551Z namespace/peerlearn created
+2026-10-31T04:39:42.3662578Z secret/peerlearn-secrets created
+2026-10-31T04:39:42.6012103Z secret/web-tls created
+2026-10-31T04:39:43.2110871Z namespace/peerlearn unchanged
+2026-10-31T04:39:43.2287382Z service/api created
+2026-10-31T04:39:43.2445446Z service/db created
+2026-10-31T04:39:43.2784527Z service/web created
+2026-10-31T04:39:43.2892160Z persistentvolumeclaim/db-data created
+2026-10-31T04:39:43.2996358Z deployment.apps/api created
+2026-10-31T04:39:43.3185103Z deployment.apps/db created
+2026-10-31T04:39:43.3605147Z deployment.apps/web created
+2026-10-31T04:39:43.3925760Z job.batch/migrate created
+2026-10-31T04:39:43.5451335Z Waiting for deployment "db" rollout to finish: 0 of 1 updated replicas are available...
+2026-10-31T04:39:54.4180551Z deployment "db" successfully rolled out
+2026-10-31T04:40:01.4994885Z job.batch/migrate condition met
+2026-10-31T04:40:01.5636750Z deployment.apps/api restarted
+2026-10-31T04:40:01.6402627Z Waiting for deployment "api" rollout to finish: 1 old replicas are pending termination...
+2026-10-31T04:40:04.4306169Z Waiting for deployment "api" rollout to finish: 1 old replicas are pending termination...
+2026-10-31T04:40:09.4548987Z Waiting for deployment "api" rollout to finish: 1 old replicas are pending termination...
+2026-10-31T04:40:09.4714314Z deployment "api" successfully rolled out
+2026-10-31T04:40:09.5522266Z deployment "web" successfully rolled out
+2026-10-31T04:40:09.6358028Z NAME                       READY   STATUS      RESTARTS   AGE
+2026-10-31T04:40:09.6358496Z pod/api-76d686b6b7-9lfsw   1/1     Running     0          8s
+2026-10-31T04:40:09.6359056Z pod/api-7c748f898b-tkbm5   0/1     Completed   0          26s
+2026-10-31T04:40:09.6359538Z pod/db-5b69d97788-2xcr7    1/1     Running     0          26s
+2026-10-31T04:40:09.6360172Z pod/migrate-8psqb          0/1     Completed   0          26s
+2026-10-31T04:40:09.6360845Z pod/web-998cb7f89-66p5c    1/1     Running     0          26s
+2026-10-31T04:40:09.6387850Z pod/web-998cb7f89-ws8sn    1/1     Running     0          26s
+2026-10-31T04:40:09.6388359Z 
+2026-10-31T04:40:09.6388726Z NAME          TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+2026-10-31T04:40:09.6389356Z service/api   ClusterIP      10.96.131.55    <none>        4000/TCP                     26s
+2026-10-31T04:40:09.6390453Z service/db    ClusterIP      10.96.235.187   <none>        5432/TCP                     26s
+2026-10-31T04:40:09.6391483Z service/web   LoadBalancer   10.96.230.213   <pending>     80:32652/TCP,443:30650/TCP   26s
+2026-10-31T04:40:09.6392488Z PeerLearn is running. On Docker Desktop open https://localhost ; elsewhere run:
+2026-10-31T04:40:09.6393497Z   kubectl -n peerlearn port-forward service/web 8443:443   and open https://localhost:8443
+2026-10-31T04:40:09.6428621Z ##[group]Run kubectl -n peerlearn port-forward service/web 8443:443 > /dev/null 2>&1 &
+2026-10-31T04:40:09.6429269Z [36;1mkubectl -n peerlearn port-forward service/web 8443:443 > /dev/null 2>&1 &[0m
+2026-10-31T04:40:09.6429677Z [36;1msleep 5[0m
+2026-10-31T04:40:09.6430032Z [36;1mcurl -skf https://localhost:8443/ | grep -q "<title>PeerLearn</title>"[0m
+2026-10-31T04:40:09.6430512Z [36;1mcurl -skf -X POST https://localhost:8443/api/auth/login \[0m
+2026-10-31T04:40:09.6430939Z [36;1m  -H "Content-Type: application/json" \[0m
+2026-10-31T04:40:09.6431779Z [36;1m  -d '{"email":"admin@pes.edu","password":"ChangeMe-Admin-1"}' | grep -q '"token"'[0m
+2026-10-31T04:40:09.6432274Z [36;1mecho "Frontend and API respond through Kubernetes"[0m
+2026-10-31T04:40:09.6464120Z shell: /usr/bin/bash -e {0}
+2026-10-31T04:40:09.6464376Z ##[endgroup]
+2026-10-31T04:40:14.9758844Z Frontend and API respond through Kubernetes
+2026-10-31T04:40:14.9876282Z Post job cleanup.
+2026-10-31T04:40:15.0323329Z Error response from daemon: No such container: kind-registry
+2026-10-31T04:40:15.0485021Z Deleting cluster "peerlearn" ...
+2026-10-31T04:40:17.0645400Z Deleted nodes: ["peerlearn-control-plane"]
+2026-10-31T04:40:17.0787710Z Post job cleanup.
+2026-10-31T04:40:17.1682073Z [command]/usr/bin/git version
+2026-10-31T04:40:17.1729078Z git version 2.56.0
+2026-10-31T04:40:17.1774505Z Temporarily overriding HOME='/home/runner/work/_temp/3c0cb6bf-b904-47cf-a89d-b6f7307a0199' before making global git config changes
+2026-10-31T04:40:17.1775986Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-31T04:40:17.1779745Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/peerlearn/peerlearn
+2026-10-31T04:40:17.1824776Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-31T04:40:17.1864553Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-31T04:40:17.2191902Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-31T04:40:17.2220438Z http.https://github.com/.extraheader
+2026-10-31T04:40:17.2234745Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-31T04:40:17.2289666Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-31T04:40:17.2625417Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-31T04:40:17.2661367Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-31T04:40:17.3114215Z Cleaning up orphan processes
+2026-10-31T04:40:17.3625686Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
