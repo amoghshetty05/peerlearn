@@ -1,6 +1,6 @@
 # PeerLearn
 
-Campus peer-tutoring web app built from the PeerLearn SRS, SAD and Test Plan (v1.0).
+Campus peer-tutoring web app built from the PeerLearn SRS, SAD and Test Plan (v1.1).
 Learners ask for help, get the top 5 ranked Tutors, and book a slot. Tutors accept or decline within 48 hours. Contact details stay hidden until a Tutor accepts.
 
 **Stack (SAD 2.1):** React SPA, Node.js + Express REST API, PostgreSQL 16, nginx reverse proxy with TLS, SMTP email.
@@ -14,6 +14,23 @@ peerlearn/
   .github/    CI: tests, coverage gate, npm audit on every PR
   docker-compose.yml
 ```
+
+## Submission: Software Engineering mini-project
+
+**Team:** Amogh Shetty (PES1UG24AM034), Aarush Patil (PES1UG24AM005), Abheek Sen (PES1UG24AM009), Allen Anish (PES1UG24AM029)
+
+| Deliverable | Where to find it |
+|---|---|
+| SRS | [docs/PeerLearn_Software_Requirements_Specification_SRS_v1.1.pdf](docs/PeerLearn_Software_Requirements_Specification_SRS_v1.1.pdf) |
+| Software Test Plan (with test cases TC-01 to TC-20) | [docs/PeerLearn_Test_Plan_v1.1.pdf](docs/PeerLearn_Test_Plan_v1.1.pdf) |
+| Software Architecture and Design Specification | [docs/PeerLearn_Software_Architecture_Design_Specification_SAD_v1.1.pdf](docs/PeerLearn_Software_Architecture_Design_Specification_SAD_v1.1.pdf) |
+| Product backlog (story points, owners, Sprint 1 and Sprint 2) | [GitHub Project board](https://github.com/users/amoghshetty05/projects/1) and the [issues](https://github.com/amoghshetty05/peerlearn/issues?q=is%3Aissue) |
+| Sprint 1 demo video | [docs/videos/sprint1-demo.mp4](docs/videos/sprint1-demo.mp4) |
+| Sprint 2 demo video | [docs/videos/sprint2-demo.mp4](docs/videos/sprint2-demo.mp4) |
+| Unit test, code coverage and branch coverage report | [docs/reports/PeerLearn_Unit_Test_Report.pdf](docs/reports/PeerLearn_Unit_Test_Report.pdf) |
+| System test (system validation) report | [docs/reports/PeerLearn_System_Test_Report.pdf](docs/reports/PeerLearn_System_Test_Report.pdf), evidence in [docs/reports/system-test-evidence](docs/reports/system-test-evidence) |
+| DevOps: Git, GitHub, GitHub Actions, Docker, Docker Hub, Kubernetes | [Actions runs](https://github.com/amoghshetty05/peerlearn/actions), [Docker Hub images](https://hub.docker.com/u/amoghshetty05), [k8s/](k8s) and the "DevOps pipeline" section below |
+| Final version | Git tag [v1.0](https://github.com/amoghshetty05/peerlearn/releases/tag/v1.0) |
 
 ## Run it
 
