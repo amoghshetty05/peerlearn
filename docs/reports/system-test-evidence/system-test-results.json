@@ -1,0 +1,623 @@
+{
+ "run": "15e63",
+ "finished": "2026-11-02T08:21:30+05:30",
+ "results": {
+  "TC-09": {
+   "id": "TC-09",
+   "title": "Rating rules",
+   "covers": "FR-09, FR-13",
+   "expected": "Pending: rejected. Score 5: 201. Second rating: 409. Score 6: 400",
+   "steps": [
+    {
+     "action": "Learner books a session starting 08:21 IST and rates it while it is still pending",
+     "observed": "HTTP 409 CONFLICT: You can rate a session only after it is completed.",
+     "ok": true
+    },
+    {
+     "action": "Tutor accepts the session",
+     "observed": "HTTP 200, status accepted",
+     "ok": true
+    },
+    {
+     "action": "Wait until the start time (08:21 IST) passes",
+     "observed": "session status: completed",
+     "ok": true
+    },
+    {
+     "action": "Rate the completed session 5 with a comment",
+     "observed": "HTTP 201",
+     "ok": true
+    },
+    {
+     "action": "Rate the same session again",
+     "observed": "HTTP 409 CONFLICT",
+     "ok": true
+    },
+    {
+     "action": "Rate with a score of 6",
+     "observed": "HTTP 400 VALIDATION_ERROR",
+     "ok": true
+    },
+    {
+     "action": "Tutor's dashboard shows the new rating (FR-13)",
+     "observed": "HTTP 200; rating: average 5.0 from 1 rating",
+     "ok": true
+    }
+   ],
+   "result": "Pass"
+  },
+  "TC-19": {
+   "id": "TC-19",
+   "title": "HTTPS and token expiry",
+   "covers": "SR-01, SR-04",
+   "expected": "Plain HTTP is rejected or redirected and TLS is 1.2 or higher; the old token gets 401 TOKEN_EXPIRED; no token gets 401",
+   "steps": [
+    {
+     "action": "Request http://localhost:8080/api/users/me (plain HTTP)",
+     "observed": "HTTP 301, Location: https://localhost/api/users/me",
+     "ok": true
+    },
+    {
+     "action": "Connect with TLS 1.2 (openssl s_client -tls1_2)",
+     "observed": "New, TLSv1.2, Cipher is ECDHE-RSA-AES256-GCM-SHA384;     Protocol  : TLSv1.2",
+     "ok": true
+    },
+    {
+     "action": "Connect with TLS 1.1 (client forced to allow it)",
+     "observed": "40C74875057F0000:error:0A00042E:SSL routines:ssl3_read_bytes:tlsv1 alert protocol version:../ssl/record/rec_layer_s3.c:1599:SSL alert number 70; New, (NONE), Cipher is (NONE)",
+     "ok": true
+    },
+    {
+     "action": "Call GET /api/users/me with a token issued 3 hours ago",
+     "observed": "HTTP 401 TOKEN_EXPIRED",
+     "ok": true
+    },
+    {
+     "action": "Call GET /api/users/me with no token",
+     "observed": "HTTP 401 UNAUTHENTICATED",
+     "ok": true
+    },
+    {
+     "action": "Call GET /api/users/me with a malformed token",
+     "observed": "HTTP 401 UNAUTHENTICATED",
+     "ok": true
+    }
+   ],
+   "result": "Pass"
+  },
+  "TC-01": {
+   "id": "TC-01",
+   "title": "Valid registration",
+   "covers": "FR-01",
+   "expected": "201 Created; the new user can log in; the response has no password",
+   "steps": [
+    {
+     "action": "POST /api/auth/register with ana.15e63@pes.edu and a 10-character password",
+     "observed": "HTTP 201; response fields: ['createdAt', 'email', 'id', 'name', 'phone', 'role', 'status']",
+     "ok": true
+    },
+    {
+     "action": "Log in with the new account",
+     "observed": "HTTP 200; token returned: True",
+     "ok": true
+    }
+   ],
+   "result": "Pass"
+  },
+  "TC-02": {
+   "id": "TC-02",
+   "title": "Non-university email",
+   "covers": "FR-01",
+   "expected": "400 VALIDATION_ERROR; no account is created",
+   "steps": [
+    {
+     "action": "POST /api/auth/register with ana.15e63@gmail.com",
+     "observed": "HTTP 400 VALIDATION_ERROR: Use your @pes.edu email address.",
+     "ok": true
+    },
+    {
+     "action": "Count users with that email in the database",
+     "observed": "0 rows",
+     "ok": true
+    }
+   ],
+   "result": "Pass"
+  },
+  "TC-03": {
+   "id": "TC-03",
+   "title": "Login success and failure",
+   "covers": "FR-02, SR-04",
+   "expected": "Correct: 200 and a token. Wrong: 401 and no token",
+   "steps": [
+    {
+     "action": "Log in as vikram@pes.edu with the correct password",
+     "observed": "HTTP 200; token returned: True; role learner",
+     "ok": true
+    },
+    {
+     "action": "Log in as vikram@pes.edu with a wrong password",
+     "observed": "HTTP 401 UNAUTHENTICATED; token returned: False",
+     "ok": true
+    },
+    {
+     "action": "Log out, then reuse the same token",
+     "observed": "logout HTTP 204; reuse HTTP 401 UNAUTHENTICATED",
+     "ok": true
+    }
+   ],
+   "result": "Pass"
+  },
+  "TC-04": {
+   "id": "TC-04",
+   "title": "Role restriction",
+   "covers": "FR-02, SR-05",
+   "expected": "403 FORBIDDEN; the report is unchanged",
+   "steps": [
+    {
+     "action": "Asha (Learner) files a report about a Tutor",
+     "observed": "HTTP 201; report id 1, status open",
+     "ok": true
+    },
+    {
+     "action": "PATCH /api/admin/reports/1 with asha's token (Learner)",
+     "observed": "HTTP 403 FORBIDDEN",
+     "ok": true
+    },
+    {
+     "action": "PATCH /api/admin/reports/1 with meera's token (Tutor)",
+     "observed": "HTTP 403 FORBIDDEN",
+     "ok": true
+    },
+    {
+     "action": "Read the report's status in the database",
+     "observed": "open",
+     "ok": true
+    },
+    {
+     "action": "Learner calls the Tutor-only endpoint GET /api/tutors/me",
+     "observed": "HTTP 403 FORBIDDEN",
+     "ok": true
+    }
+   ],
+   "result": "Pass"
+  },
+  "TC-05": {
+   "id": "TC-05",
+   "title": "Subjects and availability",
+   "covers": "FR-03, FR-04",
+   "expected": "First slot 201; overlapping slot 409 SLOT_OVERLAP; 11th subject rejected with an error",
+   "steps": [
+    {
+     "action": "Add Monday 16:00 to 17:00",
+     "observed": "HTTP 201",
+     "ok": true
+    },
+    {
+     "action": "Add Monday 16:30 to 17:30 (overlaps)",
+     "observed": "HTTP 409 SLOT_OVERLAP",
+     "ok": true
+    },
+    {
+     "action": "Boundary: a 29-minute slot, then a 30-minute slot",
+     "observed": "29 min: HTTP 400 VALIDATION_ERROR; 30 min: HTTP 201",
+     "ok": true
+    },
+    {
+     "action": "Add 10 subjects",
+     "observed": "HTTP codes: [201]",
+     "ok": true
+    },
+    {
+     "action": "Add an 11th subject",
+     "observed": "HTTP 400 VALIDATION_ERROR: You can teach at most 10 subjects.",
+     "ok": true
+    }
+   ],
+   "result": "Pass"
+  },
+  "TC-06": {
+   "id": "TC-06",
+   "title": "Ranked matches",
+   "covers": "FR-05, FR-06, FR-07, FR-15",
+   "expected": "Exactly 5 Tutors, in descending score, none without Maths, no score above 100, rating bonus applied only to the rated Tutor",
+   "steps": [
+    {
+     "action": "Test data: Maths tutors plus 1 Physics-only tutor; Nisha (Beginner) given 3 ratings of 5",
+     "observed": "tutors teaching maths: 8; Nisha's ratings: 3",
+     "ok": true
+    },
+    {
+     "action": "Asha creates a Maths help request for Mon 09 Nov 16:00 IST",
+     "observed": "HTTP 201; request id 5",
+     "ok": true
+    },
+    {
+     "action": "GET /api/requests/{id}/matches",
+     "observed": "Meera Iyer 100 (bonus 0); Mtutor2 15e63 100 (bonus 0); Nisha Kulkarni 97 (bonus 10); Mtutor0 15e63 93 (bonus 0); Mtutor1 15e63 87 (bonus 0)",
+     "ok": true
+    },
+    {
+     "action": "Exactly 5 tutors, highest score first",
+     "observed": "5 tutors; scores [100, 100, 97, 93, 87]",
+     "ok": true
+    },
+    {
+     "action": "Every tutor teaches Maths; the Physics-only tutor is absent",
+     "observed": "all teach maths: True; physics tutor listed: False",
+     "ok": true
+    },
+    {
+     "action": "No score above 100",
+     "observed": "max score 100",
+     "ok": true
+    },
+    {
+     "action": "Rating bonus only for the tutor with 3 ratings",
+     "observed": "bonuses: Meera Iyer: 0, Mtutor2 15e63: 0, Nisha Kulkarni: 10, Mtutor0 15e63: 0, Mtutor1 15e63: 0",
+     "ok": true
+    }
+   ],
+   "result": "Pass"
+  },
+  "TC-07": {
+   "id": "TC-07",
+   "title": "Booking and contact privacy",
+   "covers": "FR-08, FR-11, FR-14, SR-03",
+   "expected": "Before acceptance email and phone are absent; after acceptance they are present; both users receive a notification",
+   "steps": [
+    {
+     "action": "Asha requests Meera's slot 2026-11-02T16:00:00+05:30",
+     "observed": "HTTP 201; status pending; expires 2026-11-04T08:17:26+05:30",
+     "ok": true
+    },
+    {
+     "action": "Asha views Meera's profile before acceptance",
+     "observed": "HTTP 200; email shown: False; phone shown: False",
+     "ok": true
+    },
+    {
+     "action": "Meera accepts",
+     "observed": "HTTP 200; status accepted",
+     "ok": true
+    },
+    {
+     "action": "Asha views Meera's profile after acceptance",
+     "observed": "HTTP 200; email meera@pes.edu; phone +91 98450 33333",
+     "ok": true
+    },
+    {
+     "action": "Vikram (no accepted session with Meera) views her profile",
+     "observed": "email shown: False; phone shown: False",
+     "ok": true
+    },
+    {
+     "action": "Read both users' notifications",
+     "observed": "Meera: \"Asha Rao asked for a maths session on Mon, 2 Nov, 04:00 pm. Reply within 48 hours.\"; Asha: \"Meera Iyer accepted your session on Mon, 2 Nov, 04:00 pm. Contact details are now visible.\"",
+     "ok": true
+    }
+   ],
+   "result": "Pass"
+  },
+  "TC-08": {
+   "id": "TC-08",
+   "title": "Request expiry",
+   "covers": "FR-08, FR-11",
+   "expected": "Status becomes expired and the Learner is notified",
+   "steps": [
+    {
+     "action": "Vikram requests Rohan's Tuesday 16:00 slot; Rohan does not answer",
+     "observed": "HTTP 201; status pending; expires 2026-11-04T08:17:27+05:30",
+     "ok": true
+    },
+    {
+     "action": "Move the request 49 hours into the past in the test database (the 48-hour rule uses real time)",
+     "observed": "created_at set to 49 hours ago",
+     "ok": true
+    },
+    {
+     "action": "Wait for the background expiry job (runs every minute)",
+     "observed": "status after 55 s: expired",
+     "ok": true
+    },
+    {
+     "action": "Read Vikram's notifications",
+     "observed": "Your session request expired because the tutor did not answer within 48 hours.",
+     "ok": true
+    }
+   ],
+   "result": "Pass",
+   "note": "The 48-hour wait was simulated by moving the request's timestamps back in the test database; the expiry job itself ran unchanged."
+  },
+  "TC-10": {
+   "id": "TC-10",
+   "title": "Group capacity",
+   "covers": "FR-10",
+   "expected": "First 3 join; the 4th gets 409 GROUP_FULL; after a member leaves the 4th can join",
+   "steps": [
+    {
+     "action": "Asha creates a Maths group with 3 places",
+     "observed": "HTTP 201; group id 1",
+     "ok": true
+    },
+    {
+     "action": "Four learners try to join in turn",
+     "observed": "results: ['200', '200', '200', '409 GROUP_FULL']",
+     "ok": true
+    },
+    {
+     "action": "Member 1 leaves, then the 4th learner tries again",
+     "observed": "leave HTTP 200; join HTTP 200",
+     "ok": true
+    }
+   ],
+   "result": "Pass"
+  },
+  "TC-11": {
+   "id": "TC-11",
+   "title": "Report and suspend",
+   "covers": "FR-12",
+   "expected": "Report is stored; the suspended Tutor cannot log in; the Admin action is logged",
+   "steps": [
+    {
+     "action": "Vikram reports a Tutor",
+     "observed": "HTTP 201; report 2 status open",
+     "ok": true
+    },
+    {
+     "action": "Admin lists open reports",
+     "observed": "HTTP 200; report 2 listed: True",
+     "ok": true
+    },
+    {
+     "action": "Admin suspends the Tutor",
+     "observed": "HTTP 200; report status suspended",
+     "ok": true
+    },
+    {
+     "action": "Suspended Tutor tries to log in",
+     "observed": "HTTP 403 ACCOUNT_SUSPENDED: This account has been suspended by a moderator.",
+     "ok": true
+    },
+    {
+     "action": "Look for the Admin action in the audit log",
+     "observed": "ADMIN_SUSPEND report=2 user=20",
+     "ok": true
+    }
+   ],
+   "result": "Pass"
+  },
+  "TC-12": {
+   "id": "TC-12",
+   "title": "Password storage",
+   "covers": "NFR-01, SR-02",
+   "expected": "password_hash starts with $2b$ and cost is 10 or more; no response contains a hash",
+   "steps": [
+    {
+     "action": "Read the hash prefix of every stored password",
+     "observed": "20 users; all bcrypt $2b$: True; cost factors used: [12]",
+     "ok": true
+    },
+    {
+     "action": "Call 10 read endpoints and search each response for hashes, password fields or tokens",
+     "observed": "responses with leaks: none",
+     "ok": true
+    }
+   ],
+   "result": "Pass"
+  },
+  "TC-14": {
+   "id": "TC-14",
+   "title": "Rate limit and lockout",
+   "covers": "NFR-04, SR-08",
+   "expected": "The account is locked (423) for 15 minutes; the 101st request gets 429",
+   "steps": [
+    {
+     "action": "Enter a wrong password 5 times",
+     "observed": "HTTP codes: [401, 401, 401, 401, 401]",
+     "ok": true
+    },
+    {
+     "action": "Then log in with the correct password",
+     "observed": "HTTP 423 ACCOUNT_LOCKED: Too many failed logins. Try again in 15 minutes.",
+     "ok": true
+    },
+    {
+     "action": "Read how long the lock lasts",
+     "observed": "about 15 minutes remaining",
+     "ok": true
+    },
+    {
+     "action": "Send 101 requests in one minute with one user's token",
+     "observed": "requests 1-100: [200]; request 101: 429",
+     "ok": true
+    },
+    {
+     "action": "Another user makes a request at the same time",
+     "observed": "HTTP 200",
+     "ok": true
+    }
+   ],
+   "result": "Pass"
+  },
+  "TC-15": {
+   "id": "TC-15",
+   "title": "Injection and validation",
+   "covers": "SR-06",
+   "expected": "400 VALIDATION_ERROR or no match; no data is leaked; tables are unchanged",
+   "steps": [
+    {
+     "action": "Log in with ' OR '1'='1 as email and password",
+     "observed": "HTTP 401 UNAUTHENTICATED; token returned: False",
+     "ok": true
+    },
+    {
+     "action": "Register with a SQL-injection email",
+     "observed": "HTTP 400 VALIDATION_ERROR",
+     "ok": true
+    },
+    {
+     "action": "Create a help request whose topic is an SQL command",
+     "observed": "HTTP 201; stored as plain text: \"'); DELETE FROM sessions; --\"",
+     "ok": true
+    },
+    {
+     "action": "Create a help request with a 10,000-character topic",
+     "observed": "HTTP 400 VALIDATION_ERROR",
+     "ok": true
+    },
+    {
+     "action": "Send malformed JSON",
+     "observed": "HTTP 400; body {\"status\":400,\"code\":\"VALIDATION_ERROR\",\"message\":\"The request body is not valid JSON or i",
+     "ok": true
+    },
+    {
+     "action": "Compare row counts (users, sessions, help requests) before and after",
+     "observed": "before 22,6,6; after 22,6,7 (one new help request expected)",
+     "ok": true
+    }
+   ],
+   "result": "Pass"
+  },
+  "TC-16": {
+   "id": "TC-16",
+   "title": "Audit log",
+   "covers": "NFR-06, SR-07",
+   "expected": "3 records with user, time and action; edit and delete are refused",
+   "steps": [
+    {
+     "action": "Read the audit log for the logins, booking and Admin action done above",
+     "observed": "4 matching records; kinds found: ['BOOKING', 'LOGIN', 'SUSPEND']; example: LOGIN",
+     "ok": true
+    },
+    {
+     "action": "Check each record has user, time and action",
+     "observed": "columns: id, user_id, action, timestamp",
+     "ok": true
+    },
+    {
+     "action": "Edit a record as the application's database user",
+     "observed": "ERROR:  permission denied for table audit_log",
+     "ok": true
+    },
+    {
+     "action": "Delete a record as the application's database user",
+     "observed": "ERROR:  permission denied for table audit_log",
+     "ok": true
+    },
+    {
+     "action": "Edit a record as the database owner",
+     "observed": "ERROR:  audit_log is append-only",
+     "ok": true
+    }
+   ],
+   "result": "Pass"
+  },
+  "TC-17": {
+   "id": "TC-17",
+   "title": "Dashboard and responsive layout",
+   "covers": "FR-13, NFR-05",
+   "expected": "Upcoming sessions and pending requests (and a Tutor's rating) are shown; no horizontal scroll; at most 3 clicks",
+   "steps": [
+    {
+     "action": "Open the Learner dashboard at 360 px wide",
+     "observed": "horizontal overflow: 0 px; bottom tab bar visible: True; tabs: Home, Find, Sessions, Groups, Alerts",
+     "ok": true
+    },
+    {
+     "action": "Dashboard shows upcoming sessions and pending requests (FR-13)",
+     "observed": "'Upcoming sessions' section: True; 'Waiting for a reply' section: True",
+     "ok": true
+    },
+    {
+     "action": "Find a tutor page at 360 px",
+     "observed": "horizontal overflow: 0 px",
+     "ok": true
+    },
+    {
+     "action": "Book a slot from the Learner dashboard",
+     "observed": "3 clicks (Find a tutor, Show matching tutors, a time); confirmation: \"Request sent to Meera Iyer. They have 48 hours to reply.\"; booked with Meera Iyer",
+     "ok": true
+    },
+    {
+     "action": "Tutor (Meera Iyer) accepts from the dashboard at 360 px",
+     "observed": "1 click; average rating shown on dashboard: True; horizontal overflow: 0 px",
+     "ok": true
+    },
+    {
+     "action": "Open the Learner dashboard at 1280 px wide",
+     "observed": "horizontal overflow: 0 px; side navigation visible: True",
+     "ok": true
+    }
+   ],
+   "result": "Pass",
+   "note": "Run in Chromium (Playwright) at 360 x 740 and 1280 x 800. Screenshots tc17-1 to tc17-7."
+  },
+  "TC-13": {
+   "id": "TC-13",
+   "title": "Matching speed",
+   "covers": "NFR-03",
+   "expected": "Every response arrives in under 2 seconds",
+   "steps": [
+    {
+     "action": "Database loaded with the performance data set",
+     "observed": "1022 users, 211 tutors, 83 teaching maths",
+     "ok": true
+    },
+    {
+     "action": "Run 20 match requests (GET /api/requests/{id}/matches) through nginx over HTTPS",
+     "observed": "all 20 returned 5 ranked tutors; fastest 5 ms, average 6 ms, slowest 9 ms",
+     "ok": true
+    }
+   ],
+   "result": "Pass"
+  },
+  "TC-18": {
+   "id": "TC-18",
+   "title": "API response time",
+   "covers": "NFR-02",
+   "expected": "At least 95% of responses take under 1 second",
+   "steps": [
+    {
+     "action": "100 virtual users (each logged in) call GET /api/dashboard and POST /api/requests for 60 seconds through nginx over HTTPS (backend/scripts/load-test.js)",
+     "observed": "requests=9053 ok=9053 p50=8ms p95=29ms 100.0% of responses were successful and under 1 second (target: 95%) -> PASS",
+     "ok": true
+    }
+   ],
+   "result": "Pass",
+   "note": "Pacing keeps each user near 90 requests a minute, under the 100-per-minute limit of NFR-04."
+  },
+  "TC-20": {
+   "id": "TC-20",
+   "title": "Deployed stack on Kubernetes",
+   "covers": "SR-01, FR-02",
+   "expected": "All pods ready and the migration Job complete; the home page returns PeerLearn; login returns a token",
+   "steps": [
+    {
+     "action": "Push to main (merge of PR #33, commit 32855fc) starts the CI workflow; jobs backend and frontend run the tests and build",
+     "observed": "backend: success; frontend: success",
+     "ok": true
+    },
+    {
+     "action": "Job docker builds both images and pushes them to Docker Hub (amoghshetty05/peerlearn-api and amoghshetty05/peerlearn-web, tagged with the commit)",
+     "observed": "docker: success (04:38:16 to 04:38:57 UTC, 31 Oct 2026)",
+     "ok": true
+    },
+    {
+     "action": "Job kubernetes creates a kind cluster and runs k8s/deploy.sh with the images just pushed",
+     "observed": "deployment db, api and web successfully rolled out; job.batch/migrate condition met; pods api 1/1, db 1/1, web 2 of 2 Running",
+     "ok": true
+    },
+    {
+     "action": "Open the home page and log in as Admin through the web Service over HTTPS",
+     "observed": "home page returned PeerLearn; login returned a token: \"Frontend and API respond through Kubernetes\"",
+     "ok": true
+    }
+   ],
+   "result": "Pass",
+   "note": "Run automatically in GitHub Actions: https://github.com/amoghshetty05/peerlearn/actions/runs/41169331310 (job kubernetes)."
+  }
+ },
+ "accounts": {
+  "t9_email": "tutor9.15e63@pes.edu"
+ }
+}
