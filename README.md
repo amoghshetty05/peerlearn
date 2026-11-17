@@ -1,6 +1,6 @@
 # PeerLearn
 
-Campus peer-tutoring web app built from the PeerLearn SRS, SAD and Test Plan (v1.1).
+Campus peer-tutoring web app built from the PeerLearn SRS, SAD and Test Plan (v1.2).
 Learners ask for help, get the top 5 ranked Tutors, and book a slot. Tutors accept or decline within 48 hours. Contact details stay hidden until a Tutor accepts.
 
 **Stack (SAD 2.1):** React SPA, Node.js + Express REST API, PostgreSQL 16, nginx reverse proxy with TLS, SMTP email.
@@ -21,9 +21,9 @@ peerlearn/
 
 | Deliverable | Where to find it |
 |---|---|
-| SRS | [docs/PeerLearn_Software_Requirements_Specification_SRS_v1.1.pdf](docs/PeerLearn_Software_Requirements_Specification_SRS_v1.1.pdf) |
-| Software Test Plan (with test cases TC-01 to TC-20) | [docs/PeerLearn_Test_Plan_v1.1.pdf](docs/PeerLearn_Test_Plan_v1.1.pdf) |
-| Software Architecture and Design Specification | [docs/PeerLearn_Software_Architecture_Design_Specification_SAD_v1.1.pdf](docs/PeerLearn_Software_Architecture_Design_Specification_SAD_v1.1.pdf) |
+| SRS | [docs/PeerLearn_Software_Requirements_Specification_SRS_v1.2.pdf](docs/PeerLearn_Software_Requirements_Specification_SRS_v1.2.pdf) |
+| Software Test Plan (with test cases TC-01 to TC-20) | [docs/PeerLearn_Test_Plan_v1.2.pdf](docs/PeerLearn_Test_Plan_v1.2.pdf) |
+| Software Architecture and Design Specification | [docs/PeerLearn_Software_Architecture_Design_Specification_SAD_v1.2.pdf](docs/PeerLearn_Software_Architecture_Design_Specification_SAD_v1.2.pdf) |
 | Product backlog (story points, owners, Sprint 1 and Sprint 2) | [GitHub Project board](https://github.com/users/amoghshetty05/projects/1) and the [issues](https://github.com/amoghshetty05/peerlearn/issues?q=is%3Aissue) |
 | Sprint 1 demo video | [docs/videos/sprint1-demo.mp4](docs/videos/sprint1-demo.mp4) |
 | Sprint 2 demo video | [docs/videos/sprint2-demo.mp4](docs/videos/sprint2-demo.mp4) |
