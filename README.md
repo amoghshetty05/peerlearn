@@ -36,6 +36,7 @@ The owner of each story is recorded on its [GitHub issue](https://github.com/amo
 | Software Test Plan (with test cases TC-01 to TC-20) | [docs/PeerLearn_Test_Plan_v1.2.pdf](docs/PeerLearn_Test_Plan_v1.2.pdf) |
 | Software Architecture and Design Specification | [docs/PeerLearn_Software_Architecture_Design_Specification_SAD_v1.2.pdf](docs/PeerLearn_Software_Architecture_Design_Specification_SAD_v1.2.pdf) |
 | Product backlog (story points, owners, Sprint 1 and Sprint 2) | [GitHub Project board](https://github.com/users/amoghshetty05/projects/1) and the [issues](https://github.com/amoghshetty05/peerlearn/issues?q=is%3Aissue) |
+| Jira sprint reports (burnup, burndown, velocity) | Sprint 1: [burnup](docs/reports/jira/sprint1-burnup.jpg), [burndown](docs/reports/jira/sprint1-burndown.jpg); Sprint 2: [burnup](docs/reports/jira/sprint2-burnup.jpg), [burndown](docs/reports/jira/sprint2-burndown.jpg); [velocity](docs/reports/jira/velocity.jpg) |
 | Sprint 1 demo video | [docs/videos/sprint1-demo.mp4](docs/videos/sprint1-demo.mp4) |
 | Sprint 2 demo video | [docs/videos/sprint2-demo.mp4](docs/videos/sprint2-demo.mp4) |
 | Unit test report | [docs/reports/PeerLearn_Unit_Test_Report.pdf](docs/reports/PeerLearn_Unit_Test_Report.pdf) |
