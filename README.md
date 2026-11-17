@@ -19,6 +19,17 @@ peerlearn/
 
 **Team:** Amogh Shetty (PES1UG24AM034), Aarush Patil (PES1UG24AM005), Abheek Sen (PES1UG24AM009), Allen Anish (PES1UG24AM029)
 
+### Team and contributions
+
+| Member | GitHub | Role | Backlog stories owned |
+|---|---|---|---|
+| Amogh Shetty (PES1UG24AM034) | [@amoghshetty05](https://github.com/amoghshetty05) | Project lead and DevOps: repository owner, backlog and sprints, CI/CD, Docker, Docker Hub, Kubernetes, reviews and merges pull requests | FR-03, FR-04, FR-06, FR-10, FR-15, NFR-02, NFR-03 (tutor profiles, matching, study groups, performance) |
+| Aarush Patil (PES1UG24AM005) | [@aarushpatil3101-tech](https://github.com/aarushpatil3101-tech) | Architecture, backend and database: wrote the application code (Express API, services, PostgreSQL schema) | FR-01, FR-02, FR-08, FR-11, FR-12a, FR-14, NFR-01, NFR-04 (accounts, booking, notifications, privacy, security) |
+| Abheek Sen (PES1UG24AM009) | [@AbheekSen](https://github.com/AbheekSen) | Requirements and frontend: SRS, React screens, usability, live demo | FR-05, FR-07, FR-09, FR-12b, FR-13, NFR-05, S1-03 (help requests, matches view, ratings, admin UI, dashboard, responsive UI) |
+| Allen Anish (PES1UG24AM029) | [@allen27anish-svg](https://github.com/allen27anish-svg) | Test lead: Test Plan, unit and system tests, coverage, CI test pipeline | NFR-06, NFR-07, NFR-08, S1-01, S1-02, S1-04, S1-05, S2-01, S2-02, S2-03 (setup, CI, tests, audit log, coverage, demo videos, documentation) |
+
+The owner of each story is recorded on its [GitHub issue](https://github.com/amoghshetty05/peerlearn/issues?q=is%3Aissue).
+
 | Deliverable | Where to find it |
 |---|---|
 | SRS | [docs/PeerLearn_Software_Requirements_Specification_SRS_v1.2.pdf](docs/PeerLearn_Software_Requirements_Specification_SRS_v1.2.pdf) |
@@ -27,7 +38,9 @@ peerlearn/
 | Product backlog (story points, owners, Sprint 1 and Sprint 2) | [GitHub Project board](https://github.com/users/amoghshetty05/projects/1) and the [issues](https://github.com/amoghshetty05/peerlearn/issues?q=is%3Aissue) |
 | Sprint 1 demo video | [docs/videos/sprint1-demo.mp4](docs/videos/sprint1-demo.mp4) |
 | Sprint 2 demo video | [docs/videos/sprint2-demo.mp4](docs/videos/sprint2-demo.mp4) |
-| Unit test, code coverage and branch coverage report | [docs/reports/PeerLearn_Unit_Test_Report.pdf](docs/reports/PeerLearn_Unit_Test_Report.pdf) |
+| Unit test report | [docs/reports/PeerLearn_Unit_Test_Report.pdf](docs/reports/PeerLearn_Unit_Test_Report.pdf) |
+| Code coverage report | [docs/reports/PeerLearn_Code_Coverage_Report.pdf](docs/reports/PeerLearn_Code_Coverage_Report.pdf), HTML in [docs/reports/coverage](docs/reports/coverage) |
+| Branch coverage report | [docs/reports/PeerLearn_Branch_Coverage_Report.pdf](docs/reports/PeerLearn_Branch_Coverage_Report.pdf) |
 | System test (system validation) report | [docs/reports/PeerLearn_System_Test_Report.pdf](docs/reports/PeerLearn_System_Test_Report.pdf), evidence in [docs/reports/system-test-evidence](docs/reports/system-test-evidence) |
 | DevOps: Git, GitHub, GitHub Actions, Docker, Docker Hub, Kubernetes | [Actions runs](https://github.com/amoghshetty05/peerlearn/actions), [Docker Hub images](https://hub.docker.com/u/amoghshetty05), [k8s/](k8s) and the "DevOps pipeline" section below |
 | Final version | Git tag [v1.0](https://github.com/amoghshetty05/peerlearn/releases/tag/v1.0) |
