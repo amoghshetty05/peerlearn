@@ -203,7 +203,7 @@ button.chip.slot:hover:not(:disabled) { background: var(--teal); color: #fff; }
 .stars { display: inline-flex; gap: 1px; color: #c8d1d7; }
 .stars .on, .stars button.on { color: #e0a800; }
 .stars.input button { border: 0; background: none; padding: 2px; display: grid; place-items: center; min-width: 36px; min-height: 36px; color: #c8d1d7; }
-.stars.input button.on { color: #e0a800; }
+
 
 /* ---------- schedule, groups, misc lists ---------- */
 .rows { display: flex; flex-direction: column; }
