@@ -49,3 +49,29 @@ describe('Smart Match predictions', () => {
     expect(await predict(rows, { fetchImpl: jest.fn(impl) })).toBeNull();
   });
 });
+
+describe('Smart Match model list for the Admin page', () => {
+  const { models } = require('../../src/services/smartMatch');
+  afterEach(() => { config.smartMatch.url = ''; });
+
+  test('service not configured -> 503 SERVICE_UNAVAILABLE', async () => {
+    await expect(models({ fetchImpl: jest.fn() })).rejects.toMatchObject({ status: 503, code: 'SERVICE_UNAVAILABLE' });
+  });
+
+  test('service answers -> the model list is passed through', async () => {
+    config.smartMatch.url = 'http://ml:8000';
+    const body = { default: 'logistic_regression', models: [{ key: 'logistic_regression' }], baseline: { roc_auc: 0.75 } };
+    const fetchImpl = jest.fn().mockResolvedValue({ ok: true, json: async () => body });
+    expect(await models({ fetchImpl })).toEqual(body);
+    expect(fetchImpl.mock.calls[0][0]).toBe('http://ml:8000/models');
+  });
+
+  test.each([
+    ['service down', () => Promise.reject(new Error('ECONNREFUSED'))],
+    ['server error', () => Promise.resolve({ ok: false, status: 500 })],
+    ['wrong shape', () => Promise.resolve({ ok: true, json: async () => ({}) })],
+  ])('%s -> 503', async (_name, impl) => {
+    config.smartMatch.url = 'http://ml:8000';
+    await expect(models({ fetchImpl: jest.fn(impl) })).rejects.toMatchObject({ status: 503 });
+  });
+});

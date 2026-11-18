@@ -19,6 +19,7 @@ const P = {
   lock: 'M6 11h12v9H6zM8 11V8a4 4 0 0 1 8 0v3',
   book: 'M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h10',
   arrow: 'M5 12h14M13 6l6 6-6 6',
+  chart: 'M4 20V11M10 20V5M16 20v-8M21 20H3',
 };
 
 export default function Icon({ name, size = 20, fill = false, ...rest }) {

@@ -8,7 +8,7 @@ import { Avatar } from './ui.jsx';
 const NAV = {
   learner: [['/', 'home', 'Home'], ['/find', 'search', 'Find a tutor'], ['/sessions', 'calendar', 'Sessions'], ['/groups', 'users', 'Groups'], ['/notifications', 'bell', 'Alerts']],
   tutor: [['/', 'home', 'Home'], ['/schedule', 'clock', 'Schedule'], ['/sessions', 'calendar', 'Sessions'], ['/groups', 'users', 'Groups'], ['/notifications', 'bell', 'Alerts']],
-  admin: [['/admin', 'shield', 'Reports']],
+  admin: [['/admin', 'shield', 'Reports'], ['/admin/models', 'chart', 'Smart Match']],
 };
 
 export const Brand = ({ light }) => (
@@ -39,7 +39,7 @@ export default function Layout() {
         <Link to="/" className="side-brand"><Brand light /></Link>
         <nav aria-label="Main">
           {items.map(([to, icon, label]) => (
-            <NavLink key={to} to={to} end={to === '/'} className="nav-item">
+            <NavLink key={to} to={to} end={to === '/' || to === '/admin'} className="nav-item">
               <Icon name={icon} /><span>{label}</span>{label === 'Alerts' && unread > 0 && <em className="dot-count">{unread}</em>}
             </NavLink>
           ))}
@@ -59,7 +59,7 @@ export default function Layout() {
       <main className="main"><Outlet /></main>
       <nav className="tabbar" aria-label="Main">
         {items.map(([to, icon, label]) => (
-          <NavLink key={to} to={to} end={to === '/'} className="tab"><Icon name={icon} size={22} /><span>{label.replace('Find a tutor', 'Find')}</span></NavLink>
+          <NavLink key={to} to={to} end={to === '/' || to === '/admin'} className="tab"><Icon name={icon} size={22} /><span>{label.replace('Find a tutor', 'Find')}</span></NavLink>
         ))}
         {user.role === 'admin' && <button className="tab" onClick={() => logout()}><Icon name="logout" size={22} /><span>Log out</span></button>}
       </nav>

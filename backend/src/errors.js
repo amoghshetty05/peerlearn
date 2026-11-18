@@ -19,6 +19,7 @@ const E = {
   groupFull: () => new AppError(409, 'GROUP_FULL', 'This study group is full.'),
   locked: () => new AppError(423, 'ACCOUNT_LOCKED', 'Too many failed logins. Try again in 15 minutes.'),
   rateLimited: () => new AppError(429, 'RATE_LIMITED', 'Too many requests. Please slow down.'),
+  unavailable: (msg = 'This service is not available right now. Please try again later.') => new AppError(503, 'SERVICE_UNAVAILABLE', msg),
 };
 
 module.exports = { AppError, E };
