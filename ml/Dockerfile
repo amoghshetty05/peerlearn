@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 KERAS_BACKEND=jax KERAS_HOME=/t
 COPY ml/requirements.txt .
 RUN pip install -r requirements.txt
 COPY ml/smartmatch ./smartmatch
-COPY ml/app.py .
+COPY ml/app.py ml/params.yaml ./
 COPY ml/models ./models
 RUN useradd --system --no-create-home smartmatch
 USER smartmatch

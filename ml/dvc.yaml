@@ -1,0 +1,51 @@
+# DVC pipeline for the Smart Match models (FR-16, NFR-09). Run from the ml/ folder:
+#   dvc repro          rerun only the stages whose code, data or parameters changed
+#   dvc dag            show the pipeline
+#   dvc status         check that the committed models match the code, data and params
+#   dvc metrics show   test scores of every model (models/scores.json)
+#   dvc params diff    what changed in params.yaml since the last commit
+# Outputs are small and committed to Git (cache: false), so no DVC remote is needed and the
+# Docker image and CI use exactly the files DVC recorded in dvc.lock.
+stages:
+  simulate:
+    cmd: python -m smartmatch.simulate data/peerlearn_sessions_simulated.csv
+    deps:
+      - smartmatch/simulate.py
+      - smartmatch/features.py
+    params:
+      - simulate
+    outs:
+      - data/peerlearn_sessions_simulated.csv:
+          cache: false
+
+  train:
+    cmd: python train.py
+    deps:
+      - data/peerlearn_sessions_simulated.csv
+      - train.py
+      - smartmatch/models.py
+      - smartmatch/features.py
+    params:
+      - train
+    outs:
+      - models/logistic_regression.joblib:
+          cache: false
+      - models/random_forest.joblib:
+          cache: false
+      - models/mlp.joblib:
+          cache: false
+      - models/mlp.keras:
+          cache: false
+      - models/wide_deep.joblib:
+          cache: false
+      - models/wide_deep.keras:
+          cache: false
+      - models/qsvc.joblib:
+          cache: false
+      - models/vqc.joblib:
+          cache: false
+      - models/metrics.json:
+          cache: false
+    metrics:
+      - models/scores.json:
+          cache: false
