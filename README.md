@@ -1,6 +1,6 @@
 # PeerLearn
 
-Campus peer-tutoring web app built from the PeerLearn SRS, SAD and Test Plan (v1.2).
+Campus peer-tutoring web app built from the PeerLearn SRS, SAD and Test Plan (v1.3).
 Learners ask for help, get the top 5 ranked Tutors, and book a slot. Tutors accept or decline within 48 hours. Contact details stay hidden until a Tutor accepts.
 
 **Stack (SAD 2.1):** React SPA, Node.js + Express REST API, PostgreSQL 16, nginx reverse proxy with TLS, SMTP email, and a Python FastAPI model service (scikit-learn, Keras 3, Qiskit) for Smart Match predictions.
@@ -34,9 +34,9 @@ The owner of each story is recorded on its [GitHub issue](https://github.com/amo
 
 | Deliverable | Where to find it |
 |---|---|
-| SRS | [docs/PeerLearn_Software_Requirements_Specification_SRS_v1.2.pdf](docs/PeerLearn_Software_Requirements_Specification_SRS_v1.2.pdf) |
-| Software Test Plan (with test cases TC-01 to TC-20) | [docs/PeerLearn_Test_Plan_v1.2.pdf](docs/PeerLearn_Test_Plan_v1.2.pdf) |
-| Software Architecture and Design Specification | [docs/PeerLearn_Software_Architecture_Design_Specification_SAD_v1.2.pdf](docs/PeerLearn_Software_Architecture_Design_Specification_SAD_v1.2.pdf) |
+| SRS | [docs/PeerLearn_Software_Requirements_Specification_SRS_v1.3.pdf](docs/PeerLearn_Software_Requirements_Specification_SRS_v1.3.pdf) |
+| Software Test Plan (with test cases TC-01 to TC-30) | [docs/PeerLearn_Test_Plan_v1.3.pdf](docs/PeerLearn_Test_Plan_v1.3.pdf) |
+| Software Architecture and Design Specification | [docs/PeerLearn_Software_Architecture_Design_Specification_SAD_v1.3.pdf](docs/PeerLearn_Software_Architecture_Design_Specification_SAD_v1.3.pdf) |
 | Product backlog (story points, owners, Sprint 1 and Sprint 2) | [GitHub Project board](https://github.com/users/amoghshetty05/projects/1) and the [issues](https://github.com/amoghshetty05/peerlearn/issues?q=is%3Aissue) |
 | Jira sprint reports (burnup, burndown, velocity) | Sprint 1: [burnup](docs/reports/jira/sprint1-burnup.jpg), [burndown](docs/reports/jira/sprint1-burndown.jpg); Sprint 2: [burnup](docs/reports/jira/sprint2-burnup.jpg), [burndown](docs/reports/jira/sprint2-burndown.jpg); [velocity](docs/reports/jira/velocity.jpg) |
 | Sprint 1 demo video | [docs/videos/sprint1-demo.mp4](docs/videos/sprint1-demo.mp4) |
@@ -45,6 +45,8 @@ The owner of each story is recorded on its [GitHub issue](https://github.com/amo
 | Code coverage report | [docs/reports/PeerLearn_Code_Coverage_Report.pdf](docs/reports/PeerLearn_Code_Coverage_Report.pdf), HTML in [docs/reports/coverage](docs/reports/coverage) |
 | Branch coverage report | [docs/reports/PeerLearn_Branch_Coverage_Report.pdf](docs/reports/PeerLearn_Branch_Coverage_Report.pdf) |
 | System test (system validation) report | [docs/reports/PeerLearn_System_Test_Report.pdf](docs/reports/PeerLearn_System_Test_Report.pdf), evidence in [docs/reports/system-test-evidence](docs/reports/system-test-evidence) |
+| Automated browser tests (Playwright) | [e2e/tests](e2e/tests) (TC-21 to TC-28, TC-30); run on every PR by the `e2e` job, HTML report kept as the `playwright-report` artifact |
+| Model comparison: 2 machine learning, 2 deep learning, 2 quantum models | [docs/reports/PeerLearn_Model_Comparison_Report.pdf](docs/reports/PeerLearn_Model_Comparison_Report.pdf); MLflow runs in [ml/mlflow.db](ml/mlflow.db) (see "Comparing the models in MLflow"); screenshots in [docs/reports/mlflow](docs/reports/mlflow) |
 | DevOps: Git, GitHub, GitHub Actions, Docker, Docker Hub, Kubernetes | [Actions runs](https://github.com/amoghshetty05/peerlearn/actions), [Docker Hub images](https://hub.docker.com/u/amoghshetty05), [k8s/](k8s) and the "DevOps pipeline" section below |
 | Final version | Git tag [v1.0](https://github.com/amoghshetty05/peerlearn/releases/tag/v1.0) |
 
