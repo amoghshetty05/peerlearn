@@ -31,8 +31,10 @@ jobs:
             NODE_ENV: test,
             TEST_ADMIN_URL: "postgres://postgres:postgres@localhost:5432/postgres",
           }
-      - name: Dependency audit (no high or critical issues)
-        run: npm audit --audit-level=high
+      # Production packages only: picomatch (used only by the jest and vite build tools) has a
+      # high advisory with no fixed version yet, and it never ships in the running app.
+      - name: Dependency audit of production packages (no high or critical issues)
+        run: npm audit --omit=dev --audit-level=high
       - uses: actions/upload-artifact@v4
         with: { name: coverage, path: backend/coverage/lcov-report }
 
@@ -50,12 +52,61 @@ jobs:
           }
       - run: npm ci
       - run: npm run build
-      - run: npm audit --audit-level=high
+      - name: Dependency audit of production packages (no high or critical issues)
+        run: npm audit --omit=dev --audit-level=high
+
+  # Playwright end-to-end tests (TC-21 to TC-28): start the whole stack with Docker Compose and
+  # drive a real Chromium browser through it over HTTPS. The HTML report is kept as an artifact.
+  e2e:
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Demo secrets and a self-signed certificate (CI only)
+        run: cp .env.example .env && sh infra/gen-certs.sh
+      - name: Start the full stack (db, migrate, api, web)
+        run: docker compose up --build -d
+      - name: Wait until nginx and the API answer over HTTPS
+        run: |
+          for i in $(seq 1 60); do
+            if curl -skf -X POST https://localhost/api/auth/login -H "Content-Type: application/json" \
+                 -d '{"email":"admin@pes.edu","password":"ChangeMe-Admin-1"}' | grep -q '"token"'; then
+              echo "Stack is up"; exit 0
+            fi
+            sleep 3
+          done
+          docker compose ps; docker compose logs --tail=80; exit 1
+      - uses: actions/setup-node@v4
+        with:
+          {
+            node-version: 22,
+            cache: npm,
+            cache-dependency-path: e2e/package-lock.json,
+          }
+      - name: Install Playwright and Chromium
+        working-directory: e2e
+        run: npm ci && npx playwright install --with-deps chromium
+      - name: Run the Playwright tests
+        working-directory: e2e
+        run: npx playwright test
+        env:
+          {
+            BASE_URL: "https://localhost",
+            HTTP_URL: "http://localhost",
+            ADMIN_EMAIL: "admin@pes.edu",
+            ADMIN_PASSWORD: "ChangeMe-Admin-1",
+          }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: playwright-report, path: e2e/playwright-report }
+      - name: Show container logs if anything failed
+        if: failure()
+        run: docker compose logs --tail=150
 
   # Docker + Docker Hub: after tests pass on main, build both images and push them to Docker Hub.
   # Needs two repository secrets: DOCKERHUB_USERNAME and DOCKERHUB_TOKEN (a Docker Hub access token).
   docker:
-    needs: [backend, frontend]
+    needs: [backend, frontend, e2e]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
