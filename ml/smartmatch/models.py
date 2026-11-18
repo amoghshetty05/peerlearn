@@ -16,8 +16,11 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
-SEED = 2026
+from .params import P
+
+SEED = P["train"]["seed"]
 N_QUBITS = 4
+RF, NN = P["train"]["random_forest"], P["train"]["neural"]
 
 
 class Model:
@@ -59,13 +62,13 @@ class RandomForestModel(Model):
     description = "120 decision trees voting together; captures thresholds and interactions."
 
     def fit(self, X, y):
-        self.clf = RandomForestClassifier(n_estimators=120, max_depth=9, min_samples_leaf=8,
-                                          random_state=SEED, n_jobs=-1)
+        self.clf = RandomForestClassifier(n_estimators=RF["n_estimators"], max_depth=RF["max_depth"],
+                                          min_samples_leaf=RF["min_samples_leaf"], random_state=SEED, n_jobs=-1)
         self.clf.fit(X, y)
         return self
 
     def params(self):
-        return {"n_estimators": 120, "max_depth": 9, "min_samples_leaf": 8}
+        return dict(RF)
 
     def predict_proba(self, X):
         return self.clf.predict_proba(X)[:, 1]
@@ -74,7 +77,7 @@ class RandomForestModel(Model):
 # ---------------------------------------------------------------- deep learning (Keras 3)
 class _KerasModel(Model):
     """Keras models are saved as .keras files; the wrapper itself is pickled without them."""
-    epochs = 80
+    epochs = NN["max_epochs"]
 
     def _inputs(self, X):
         return np.asarray(X, dtype=np.float32)
@@ -83,16 +86,17 @@ class _KerasModel(Model):
         import keras
         keras.utils.set_random_seed(SEED)
         self.net = self.build()
-        self.net.compile(optimizer=keras.optimizers.Adam(1e-3), loss="binary_crossentropy",
+        self.net.compile(optimizer=keras.optimizers.Adam(NN["learning_rate"]), loss="binary_crossentropy",
                          metrics=[keras.metrics.AUC(name="auc")])
-        stop = keras.callbacks.EarlyStopping(monitor="val_auc", mode="max", patience=10, restore_best_weights=True)
+        stop = keras.callbacks.EarlyStopping(monitor="val_auc", mode="max", patience=NN["patience"], restore_best_weights=True)
         self.history = self.net.fit(self._inputs(X), np.asarray(y, dtype=np.float32), epochs=self.epochs,
-                                    batch_size=64, validation_split=0.15, callbacks=[stop], verbose=0).history
+                                    batch_size=NN["batch_size"], validation_split=0.15, callbacks=[stop], verbose=0).history
         return self
 
     def params(self):
-        return {"framework": "Keras 3 (JAX backend)", "optimizer": "Adam", "learning_rate": 0.001, "batch_size": 64,
-                "max_epochs": self.epochs, "epochs_run": len(self.history.get("loss", [])), "early_stopping": "val_auc, patience 10",
+        return {"framework": "Keras 3 (JAX backend)", "optimizer": "Adam", "learning_rate": NN["learning_rate"],
+                "batch_size": NN["batch_size"], "max_epochs": self.epochs, "epochs_run": len(self.history.get("loss", [])),
+                "early_stopping": f"val_auc, patience {NN['patience']}",
                 "trainable_parameters": int(self.net.count_params()) if self.net is not None else None}
 
     def predict_proba(self, X):
@@ -175,7 +179,7 @@ class QSVCModel(Model):
     description = ("Support vector machine whose kernel is the overlap of 4-qubit quantum states from a ZZ "
                    "feature map, computed on Qiskit's statevector simulator. The encoding bandwidth and the "
                    "number of feature-map repetitions are chosen by 5-fold cross-validation on the training rows.")
-    train_size = 400
+    train_size = P["train"]["quantum_train_rows"]
 
     def _make(self, angle_max, reps):
         from qiskit.circuit.library import ZZFeatureMap
@@ -222,8 +226,8 @@ class VQCModel(Model):
                    "cross-entropy. Probabilities come from Qiskit's exact statevector simulator. The encoding "
                    "bandwidth is the one chosen by the kernel model's cross-validation (training a VQC takes "
                    "about 2 minutes, too slow to cross-validate each setting).")
-    train_size = 400
-    maxiter = 150
+    train_size = P["train"]["quantum_train_rows"]
+    maxiter = P["train"]["vqc_maxiter"]
 
     def __init__(self, angle_max=np.pi):
         self.angle_max = angle_max
