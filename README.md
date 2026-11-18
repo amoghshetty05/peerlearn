@@ -118,6 +118,31 @@ npm run load        # TC-18: 100 concurrent users for 60 s (SECONDS=20 for a sho
 Result on the last run here: **61 tests passing, 94.9% line coverage**, load test 100% of 2,926 requests under 1 s (p95 106 ms).
 `npm audit --audit-level=high` is clean for both `backend/` and `frontend/` (CI runs it on every PR).
 
+### End-to-end browser tests (Playwright)
+
+`e2e/` holds the automated browser tests (Test Plan TC-21 to TC-28). They open a real Chromium browser and drive the app through nginx over HTTPS, the way a student would: register, log in, search for tutors, book, accept, join a group, report and suspend, plus a 360-pixel phone layout check and security checks. Each test creates its own users, so the tests can run again and again on the same database.
+
+```bash
+docker compose up --build -d                       # full stack on https://localhost
+cd e2e
+npm ci && npx playwright install chromium          # first time only
+npx playwright test                                # all tests, headless
+npx playwright test --headed tests/booking.spec.js # watch one test run in a visible browser
+npx playwright show-report                         # HTML report with screenshots and traces of failures
+```
+The `e2e` job in GitHub Actions runs the same tests on every pull request, and keeps the HTML report as the `playwright-report` artifact. Docker images are pushed only after these tests pass.
+
+| File | Test case | Requirements |
+|---|---|---|
+| `tests/auth.spec.js` | TC-21 Registration and login | FR-01, FR-02 |
+| `tests/access.spec.js` | TC-22 Access control | FR-02, SR-04, SR-05 |
+| `tests/matching.spec.js` | TC-23 Ranked matches | FR-05, FR-06, FR-07 |
+| `tests/booking.spec.js` | TC-24 Booking, acceptance, contact reveal | FR-08, FR-11, FR-13, FR-14 |
+| `tests/groups.spec.js` | TC-25 Study groups | FR-10 |
+| `tests/moderation.spec.js` | TC-26 Report and suspend | FR-12 |
+| `tests/responsive.spec.js` | TC-27 Phone layout and 3-click booking | NFR-05, FR-13 |
+| `tests/security.spec.js` | TC-28 HTTPS, headers, no hashes, input validation | SR-01, SR-02, SR-06 |
+
 ## Requirement to code to test
 
 | Requirement | Where it lives | Tests |
