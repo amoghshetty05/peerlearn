@@ -19,6 +19,7 @@ kubectl apply -k k8s
 
 kubectl -n "$NS" rollout status deployment/db --timeout=180s
 kubectl -n "$NS" wait --for=condition=complete job/migrate --timeout=300s
+kubectl -n "$NS" rollout status deployment/ml --timeout=300s
 kubectl -n "$NS" rollout restart deployment/api
 kubectl -n "$NS" rollout status deployment/api --timeout=180s
 kubectl -n "$NS" rollout status deployment/web --timeout=180s

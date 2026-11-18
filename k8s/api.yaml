@@ -33,6 +33,8 @@ spec:
               value: postgres://peerlearn_app:$(APP_DB_PASSWORD)@db:5432/peerlearn
             - name: JWT_SECRET
               valueFrom: { secretKeyRef: { name: peerlearn-secrets, key: JWT_SECRET } }
+            - name: ML_URL                        # FR-16 Smart Match model service; matching works without it
+              value: http://ml:8000
           readinessProbe:
             httpGet:
               path: /health

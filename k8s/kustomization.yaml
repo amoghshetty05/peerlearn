@@ -6,6 +6,7 @@ resources:
   - namespace.yaml
   - postgres.yaml
   - migrate-job.yaml
+  - ml.yaml
   - api.yaml
   - web.yaml
 # Images come from Docker Hub. Replace DOCKERHUB_USERNAME with your Docker Hub username (lower case).
@@ -16,4 +17,7 @@ images:
     newTag: latest
   - name: peerlearn-web
     newName: amoghshetty05/peerlearn-web
+    newTag: latest
+  - name: peerlearn-ml
+    newName: amoghshetty05/peerlearn-ml
     newTag: latest

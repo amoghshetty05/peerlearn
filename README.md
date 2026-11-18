@@ -3,12 +3,14 @@
 Campus peer-tutoring web app built from the PeerLearn SRS, SAD and Test Plan (v1.2).
 Learners ask for help, get the top 5 ranked Tutors, and book a slot. Tutors accept or decline within 48 hours. Contact details stay hidden until a Tutor accepts.
 
-**Stack (SAD 2.1):** React SPA, Node.js + Express REST API, PostgreSQL 16, nginx reverse proxy with TLS, SMTP email.
+**Stack (SAD 2.1):** React SPA, Node.js + Express REST API, PostgreSQL 16, nginx reverse proxy with TLS, SMTP email, and a Python FastAPI model service (scikit-learn, Keras 3, Qiskit) for Smart Match predictions.
 
 ```
 peerlearn/
   backend/    Express API: routes (CMP-02), services (CMP-03 to CMP-10), dal (CMP-11), middleware, jobs
   frontend/   React SPA (CMP-01), Vite
+  ml/         Smart Match model service (CMP-13, FR-16): 2 ML, 2 deep learning, 2 quantum models, FastAPI
+  e2e/        Playwright end-to-end browser tests (TC-21 to TC-28, TC-30)
   db/         schema.sql (SAD 3.1)
   infra/      nginx.conf, certificate + TLS check scripts
   .github/    CI: tests, coverage gate, npm audit on every PR
@@ -84,10 +86,10 @@ Every tool the course requires is used, and each step leaves evidence in the rep
 |---|---|---|
 | Git | All source, documents and videos are version-controlled; one branch per change | Commit history |
 | GitHub | Repository, pull requests reviewed and merged by the repo owner, Project board with the backlog, `main` protected by a ruleset | Pull requests, Projects tab, Settings > Rules |
-| GitHub Actions | `.github/workflows/ci.yml`: `backend` (tests, 70% coverage gate, `npm audit`) and `frontend` (build, `npm audit`) on every PR; `docker` and `kubernetes` on every push to `main` | Actions tab |
+| GitHub Actions | `.github/workflows/ci.yml`: `backend` (Jest tests, 70% coverage gate, `npm audit`), `frontend` (build, `npm audit`), `ml` (model service tests) and `e2e` (Playwright browser tests on the full Docker Compose stack) on every PR; `docker` and `kubernetes` on every push to `main` | Actions tab |
 | Docker | `backend/Dockerfile`, `frontend/Dockerfile`, `docker-compose.yml` for the full local stack | `docker compose up --build` |
-| Docker Hub | The `docker` job pushes `<user>/peerlearn-api` and `<user>/peerlearn-web`, tagged with the commit SHA and `latest` | Docker Hub repositories |
-| Kubernetes | `k8s/` manifests (namespace, PostgreSQL with a volume, migration Job, API, nginx web), applied by `k8s/deploy.sh`; the `kubernetes` job deploys the Docker Hub images to a kind cluster and logs in through nginx over HTTPS | `kubernetes` job log in the Actions tab |
+| Docker Hub | The `docker` job pushes `<user>/peerlearn-api`, `<user>/peerlearn-web` and `<user>/peerlearn-ml`, tagged with the commit SHA and `latest` | Docker Hub repositories |
+| Kubernetes | `k8s/` manifests (namespace, PostgreSQL with a volume, migration Job, Smart Match model service, API, nginx web), applied by `k8s/deploy.sh`; the `kubernetes` job deploys the Docker Hub images to a kind cluster and logs in through nginx over HTTPS | `kubernetes` job log in the Actions tab |
 
 Pipeline on every push to `main`: tests pass, then images are built and pushed to Docker Hub, then they are deployed to Kubernetes and smoke-tested.
 
@@ -120,7 +122,7 @@ Result on the last run here: **61 tests passing, 94.9% line coverage**, load tes
 
 ### End-to-end browser tests (Playwright)
 
-`e2e/` holds the automated browser tests (Test Plan TC-21 to TC-28). They open a real Chromium browser and drive the app through nginx over HTTPS, the way a student would: register, log in, search for tutors, book, accept, join a group, report and suspend, plus a 360-pixel phone layout check and security checks. Each test creates its own users, so the tests can run again and again on the same database.
+`e2e/` holds the automated browser tests (Test Plan TC-21 to TC-28 and TC-30). They open a real Chromium browser and drive the app through nginx over HTTPS, the way a student would: register, log in, search for tutors, book, accept, join a group, report and suspend, plus a 360-pixel phone layout check and security checks. Each test creates its own users, so the tests can run again and again on the same database.
 
 ```bash
 docker compose up --build -d                       # full stack on https://localhost
@@ -142,6 +144,36 @@ The `e2e` job in GitHub Actions runs the same tests on every pull request, and k
 | `tests/moderation.spec.js` | TC-26 Report and suspend | FR-12 |
 | `tests/responsive.spec.js` | TC-27 Phone layout and 3-click booking | NFR-05, FR-13 |
 | `tests/security.spec.js` | TC-28 HTTPS, headers, no hashes, input validation | SR-01, SR-02, SR-06 |
+| `tests/smart-match.spec.js` | TC-30 Predicted success shown for every match | FR-16 |
+
+## Smart Match: six prediction models (FR-16)
+
+For every Tutor in the match list, Smart Match shows the predicted chance that the session succeeds (the Tutor accepts and the Learner rates it 4 or 5). The rule-based score still decides the order (FR-07); the prediction breaks ties and helps the Learner choose. If the model service is down, matching works as before without predictions.
+
+| Family | Model | Accuracy | F1 | ROC-AUC |
+|---|---|---|---|---|
+| Baseline | Rule-based score (FR-06) | 0.718 | 0.805 | 0.749 |
+| Machine learning | Logistic Regression (default) | 0.743 | 0.810 | 0.779 |
+| Machine learning | Random Forest | 0.739 | 0.813 | 0.774 |
+| Deep learning | Multilayer Perceptron (Keras) | 0.738 | 0.808 | 0.775 |
+| Deep learning | Wide & Deep Network (Keras) | 0.744 | 0.811 | 0.775 |
+| Quantum | Quantum Kernel SVM (Qiskit, 4 qubits) | 0.732 | 0.806 | 0.757 |
+| Quantum | Variational Quantum Classifier (Qiskit, 4 qubits) | 0.713 | 0.793 | 0.727 |
+
+Test set of 1,200 simulated sessions (seed 2026). The data is simulated because PeerLearn has no real usage history yet; see `ml/README.md` and the Model Comparison Report in `docs/reports`. All four classical models reach about the best AUC possible on this data (0.78) and beat the rule-based score. The quantum kernel SVM also beats the rule-based score; both quantum models are limited to 4 qubits and 400 training rows on a simulator.
+
+### Comparing the models in MLflow
+
+Every training run is recorded in MLflow (`ml/mlflow.db`, experiment `peerlearn-smart-match`): one parent run with a child run per model, holding its parameters (for example trees, layers, qubits, encoding bandwidth) and metrics (accuracy, precision, recall, F1, ROC-AUC, training time, prediction time).
+
+```bash
+cd ml
+pip install -r requirements-dev.txt
+python train.py                                        # optional: retrain all six (about 4 minutes) and log a new run
+python compare.py                                      # comparison table read back from MLflow
+mlflow ui --backend-store-uri sqlite:///mlflow.db      # open http://localhost:5000 -> peerlearn-smart-match
+```
+In the MLflow UI, expand the training run, tick the seven model runs and click **Compare** for the side-by-side table and charts. With Docker: `docker compose --profile mlflow up mlflow` starts the same UI on http://localhost:5000.
 
 ## Requirement to code to test
 

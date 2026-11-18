@@ -1,0 +1,41 @@
+# CMP-13 Smart Match model service (FR-16): the six trained models behind POST /predict.
+# Stateless, so it can run more than one replica. The API reaches it at http://ml:8000.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml
+  labels: { app: ml }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: ml }
+  template:
+    metadata:
+      labels: { app: ml }
+    spec:
+      containers:
+        - name: ml
+          image: peerlearn-ml
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet: { path: /health, port: 8000 }
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: /health, port: 8000 }
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests: { cpu: 100m, memory: 512Mi }
+            limits: { memory: 1Gi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml
+spec:
+  selector: { app: ml }
+  ports:
+    - port: 8000
+      targetPort: 8000
