@@ -1,0 +1,99 @@
+schema: '2.0'
+stages:
+  simulate:
+    cmd: python -m smartmatch.simulate data/peerlearn_sessions_simulated.csv
+    deps:
+    - path: smartmatch/features.py
+      hash: md5
+      md5: 5a2b84eca193e51f7c2672f8d6cf7355
+      size: 1977
+    - path: smartmatch/simulate.py
+      hash: md5
+      md5: e1726c94112e45bff6a24f7d5f6fe2b2
+      size: 3156
+    params:
+      params.yaml:
+        simulate:
+          rows: 6000
+          seed: 2026
+    outs:
+    - path: data/peerlearn_sessions_simulated.csv
+      hash: md5
+      md5: 4282b6f4552d2dc1953cf143fa5d4476
+      size: 255046
+  train:
+    cmd: python train.py
+    deps:
+    - path: data/peerlearn_sessions_simulated.csv
+      hash: md5
+      md5: 4282b6f4552d2dc1953cf143fa5d4476
+      size: 255046
+    - path: smartmatch/features.py
+      hash: md5
+      md5: 5a2b84eca193e51f7c2672f8d6cf7355
+      size: 1977
+    - path: smartmatch/models.py
+      hash: md5
+      md5: f7e91448644dd3340a4e678916fd3631
+      size: 12814
+    - path: train.py
+      hash: md5
+      md5: 281212a2309caae0f23c5b6cab0f580d
+      size: 7126
+    params:
+      params.yaml:
+        train:
+          seed: 2026
+          test_size: 0.2
+          quantum_train_rows: 400
+          random_forest:
+            n_estimators: 120
+            max_depth: 9
+            min_samples_leaf: 8
+          neural:
+            max_epochs: 80
+            batch_size: 64
+            learning_rate: 0.001
+            patience: 10
+          vqc_maxiter: 150
+    outs:
+    - path: models/logistic_regression.joblib
+      hash: md5
+      md5: adfa868c593c343520e35e3c7c8da64d
+      size: 1683
+    - path: models/metrics.json
+      hash: md5
+      md5: 3b49463864aed0a6892bc941233e8bff
+      size: 143278
+    - path: models/mlp.joblib
+      hash: md5
+      md5: 99cb55a563c50961465b6611fd1aa8d2
+      size: 2320
+    - path: models/mlp.keras
+      hash: md5
+      md5: f561c70195bc5243c57d1f63b02863a1
+      size: 40375
+    - path: models/qsvc.joblib
+      hash: md5
+      md5: 00996bfc5d1410bf0d6c04d3dd420829
+      size: 32498
+    - path: models/random_forest.joblib
+      hash: md5
+      md5: 492f0fc33dd85456153abbdabdb57316
+      size: 2797979
+    - path: models/scores.json
+      hash: md5
+      md5: 6009af3b7865a021f64b67d4a1f2c0dc
+      size: 843
+    - path: models/vqc.joblib
+      hash: md5
+      md5: 18f99c3103b226f01929426711963488
+      size: 3427
+    - path: models/wide_deep.joblib
+      hash: md5
+      md5: 5744ecf367da4cdd8ad21790d1990555
+      size: 1965
+    - path: models/wide_deep.keras
+      hash: md5
+      md5: f88120e95f9183a327c37f24248bb9cd
+      size: 89187

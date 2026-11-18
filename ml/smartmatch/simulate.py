@@ -14,8 +14,9 @@ import numpy as np
 import pandas as pd
 
 from .features import FEATURES
+from .params import P
 
-SEED = 2026
+SEED = P["simulate"]["seed"]
 
 
 def success_logit(df, rng=None):
@@ -35,7 +36,7 @@ def success_logit(df, rng=None):
     return z
 
 
-def generate(n=6000, seed=SEED):
+def generate(n=P["simulate"]["rows"], seed=SEED):
     rng = np.random.default_rng(seed)
     rating_count = np.minimum(rng.geometric(0.18, n) - 1, 20)
     rating_avg = np.where(rating_count > 0, np.clip(rng.normal(4.1, 0.6, n), 1, 5) / 5, 0.0)

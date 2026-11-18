@@ -5,7 +5,7 @@ usage (from the ml/ folder):
     python train.py
     mlflow ui --backend-store-uri sqlite:///mlflow.db      # then open http://localhost:5000
 
-Writes  data/peerlearn_sessions_simulated.csv, models/*.joblib|*.keras, models/metrics.json,
+Writes  data/peerlearn_sessions_simulated.csv, models/*.joblib|*.keras, models/metrics.json, models/scores.json,
         and one MLflow parent run (experiment "peerlearn-smart-match") with a child run per model.
 """
 import json
@@ -21,7 +21,10 @@ from sklearn.model_selection import train_test_split
 
 from smartmatch import models as M
 from smartmatch.features import FEATURES, rule_score
-from smartmatch.simulate import SEED, generate
+from smartmatch.params import P
+from smartmatch.simulate import generate
+
+SEED = P["train"]["seed"]
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(HERE, "data", "peerlearn_sessions_simulated.csv")
@@ -58,7 +61,7 @@ def main():
         generate().to_csv(DATA, index=False)
     df = pd.read_csv(DATA)
     X, y = df[FEATURES].to_numpy(np.float32), df["success"].to_numpy()
-    X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, stratify=y, random_state=SEED)
+    X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=P["train"]["test_size"], stratify=y, random_state=SEED)
     print(f"data: {len(df)} rows, success rate {y.mean():.1%}; train {len(y_tr)}, test {len(y_te)}")
 
     mlflow.set_tracking_uri(TRACKING_URI)
@@ -128,6 +131,9 @@ def main():
     }
     with open(os.path.join(OUT, "metrics.json"), "w") as f:
         json.dump(meta, f, indent=1)
+    # Small score file for DVC:  dvc metrics show  /  dvc metrics diff
+    with open(os.path.join(OUT, "scores.json"), "w") as f:
+        json.dump({r["key"]: {k: r[k] for k in METRICS} for r in ordered}, f, indent=1)
     print(f"default model for the API: {best['name']} (highest ROC-AUC)")
     print(f"MLflow: experiment '{EXPERIMENT}' in {TRACKING_URI}")
 

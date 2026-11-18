@@ -88,10 +88,12 @@ Every tool the course requires is used, and each step leaves evidence in the rep
 |---|---|---|
 | Git | All source, documents and videos are version-controlled; one branch per change | Commit history |
 | GitHub | Repository, pull requests reviewed and merged by the repo owner, Project board with the backlog, `main` protected by a ruleset | Pull requests, Projects tab, Settings > Rules |
-| GitHub Actions | `.github/workflows/ci.yml`: `backend` (Jest tests, 70% coverage gate, `npm audit`), `frontend` (build, `npm audit`), `ml` (model service tests) and `e2e` (Playwright browser tests on the full Docker Compose stack) on every PR; `docker` and `kubernetes` on every push to `main` | Actions tab |
+| GitHub Actions | `.github/workflows/ci.yml`: `backend` (Jest tests, 70% coverage gate, `npm audit`), `frontend` (build, `npm audit`), `ml` (model service tests, MLflow and DVC checks) and `e2e` (Playwright browser tests on the full Docker Compose stack) on every PR; `docker` and `kubernetes` on every push to `main` | Actions tab |
 | Docker | `backend/Dockerfile`, `frontend/Dockerfile`, `docker-compose.yml` for the full local stack | `docker compose up --build` |
 | Docker Hub | The `docker` job pushes `<user>/peerlearn-api`, `<user>/peerlearn-web` and `<user>/peerlearn-ml`, tagged with the commit SHA and `latest` | Docker Hub repositories |
 | Kubernetes | `k8s/` manifests (namespace, PostgreSQL with a volume, migration Job, Smart Match model service, API, nginx web), applied by `k8s/deploy.sh`; the `kubernetes` job deploys the Docker Hub images to a kind cluster and logs in through nginx over HTTPS | `kubernetes` job log in the Actions tab |
+| MLflow | `ml/train.py` logs a run per model (parameters and accuracy, F1, ROC-AUC) to `ml/mlflow.db`; compare in the MLflow UI | `mlflow ui`, `python compare.py` |
+| DVC | `ml/dvc.yaml` pipeline (simulate -> train) with `ml/params.yaml`; `ml/dvc.lock` pins every input and output; CI runs `dvc status` | `dvc dag`, `dvc status`, `dvc metrics show` |
 
 Pipeline on every push to `main`: tests pass, then images are built and pushed to Docker Hub, then they are deployed to Kubernetes and smoke-tested.
 
@@ -163,6 +165,28 @@ For every Tutor in the match list, Smart Match shows the predicted chance that t
 | Quantum | Variational Quantum Classifier (Qiskit, 4 qubits) | 0.713 | 0.793 | 0.727 |
 
 Test set of 1,200 simulated sessions (seed 2026). The data is simulated because PeerLearn has no real usage history yet; see `ml/README.md` and the Model Comparison Report in `docs/reports`. All four classical models reach about the best AUC possible on this data (0.78) and beat the rule-based score. The quantum kernel SVM also beats the rule-based score; both quantum models are limited to 4 qubits and 400 training rows on a simulator.
+
+### Reproducible pipeline with DVC
+
+The model pipeline is defined in `ml/dvc.yaml` and its settings in `ml/params.yaml`; DVC records the exact hash of every input and output in `ml/dvc.lock`.
+
+```
+simulate  (smartmatch/simulate.py, params: simulate)  ->  data/peerlearn_sessions_simulated.csv
+train     (train.py, smartmatch/models.py, params: train)  ->  models/*.joblib, *.keras, metrics.json, scores.json
+```
+
+```bash
+cd ml
+pip install -r requirements-dev.txt
+dvc dag                 # the pipeline above
+dvc status              # "Data and pipelines are up to date" = committed models match code, data and params
+dvc metrics show        # test scores of every model (models/scores.json)
+# change a value in params.yaml (for example random_forest.n_estimators), then:
+dvc repro               # reruns only the stages affected by the change (and logs a new MLflow run)
+dvc params diff         # what changed
+dvc metrics diff        # how the scores moved
+```
+The outputs are small, so they are committed to Git (`cache: false`) and no DVC remote is needed. The `ml` job in GitHub Actions runs `dvc status` on every pull request, so code or parameter changes without a matching `dvc repro` are caught.
 
 ### Comparing the models in MLflow
 

@@ -1,0 +1,20 @@
+# Parameters of the Smart Match pipeline (read by smartmatch/simulate.py and train.py).
+# DVC tracks them: change a value, run  dvc repro  and only the affected stages run again;
+# dvc params diff  shows what changed and  dvc metrics diff  how the scores moved.
+simulate:
+  rows: 6000              # simulated request-Tutor pairs
+  seed: 2026
+train:
+  seed: 2026
+  test_size: 0.2          # share of rows held back for testing
+  quantum_train_rows: 400 # quantum simulation is slow: train on a stratified sample
+  random_forest:
+    n_estimators: 120
+    max_depth: 9
+    min_samples_leaf: 8
+  neural:                 # both Keras models
+    max_epochs: 80
+    batch_size: 64
+    learning_rate: 0.001
+    patience: 10
+  vqc_maxiter: 150        # COBYLA iterations for the variational quantum classifier

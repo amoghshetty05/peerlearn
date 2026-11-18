@@ -25,6 +25,7 @@ Tutor level, time fit, average rating, number of ratings, acceptance rate, workl
 ```bash
 cd ml
 pip install -r requirements-dev.txt
+dvc repro                               # run the whole pipeline (simulate -> train) with DVC, or step by step:
 python -m smartmatch.simulate          # regenerate the data (optional, already committed)
 python train.py                         # train and evaluate all six, writes models/, metrics.json and an MLflow run
 python compare.py                       # compare the six from MLflow (add --check to verify all six are there)

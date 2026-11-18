@@ -1,0 +1,51 @@
+{
+ "rule_based": {
+  "accuracy": 0.7175,
+  "precision": 0.7234,
+  "recall": 0.908,
+  "f1": 0.8053,
+  "roc_auc": 0.7485
+ },
+ "logistic_regression": {
+  "accuracy": 0.7433,
+  "precision": 0.7729,
+  "recall": 0.851,
+  "f1": 0.8101,
+  "roc_auc": 0.779
+ },
+ "random_forest": {
+  "accuracy": 0.7392,
+  "precision": 0.7536,
+  "recall": 0.8834,
+  "f1": 0.8134,
+  "roc_auc": 0.7737
+ },
+ "mlp": {
+  "accuracy": 0.7383,
+  "precision": 0.7657,
+  "recall": 0.8549,
+  "f1": 0.8078,
+  "roc_auc": 0.7753
+ },
+ "wide_deep": {
+  "accuracy": 0.7442,
+  "precision": 0.7719,
+  "recall": 0.8549,
+  "f1": 0.8113,
+  "roc_auc": 0.775
+ },
+ "qsvc": {
+  "accuracy": 0.7317,
+  "precision": 0.7528,
+  "recall": 0.8679,
+  "f1": 0.8063,
+  "roc_auc": 0.7569
+ },
+ "vqc": {
+  "accuracy": 0.7133,
+  "precision": 0.7394,
+  "recall": 0.8562,
+  "f1": 0.7935,
+  "roc_auc": 0.7265
+ }
+}

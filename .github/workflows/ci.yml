@@ -70,6 +70,15 @@ jobs:
         env: { KERAS_BACKEND: jax }
       - name: "MLflow holds 2 machine learning, 2 deep learning and 2 quantum runs"
         run: python compare.py --check
+      # DVC: the committed data and models must be exactly what the pipeline in dvc.yaml produces
+      # from the committed code and params.yaml (hashes in dvc.lock). Fails if someone changes the
+      # code or parameters without rerunning  dvc repro.
+      - name: "DVC pipeline is up to date (dvc status)"
+        run: |
+          dvc status
+          dvc status --quiet
+      - name: "DVC metrics (test scores of every model)"
+        run: dvc metrics show --md
 
   # Playwright end-to-end tests (TC-21 to TC-28): start the whole stack with Docker Compose and
   # drive a real Chromium browser through it over HTTPS. The HTML report is kept as an artifact.
