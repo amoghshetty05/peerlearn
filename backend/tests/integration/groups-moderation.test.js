@@ -110,3 +110,15 @@ describe('TC-16 audit log (NFR-06, SR-07)', () => {
     expect((await admin.query('SELECT count(*) FROM audit_log')).rows[0].count).toBe('3');
   });
 });
+
+describe('Smart Match model page (FR-16, NFR-09)', () => {
+  test('only an Admin may list the models; without the model service the answer is 503', async () => {
+    const learner = await makeUser('learner'); const tutor = await makeUser('tutor'); const adm = await makeUser('admin');
+    expect((await api().get('/api/admin/models').set(as(learner))).status).toBe(403);
+    expect((await api().get('/api/admin/models').set(as(tutor))).status).toBe(403);
+    expect((await api().get('/api/admin/models')).status).toBe(401);
+    const res = await api().get('/api/admin/models').set(as(adm));
+    expect(res.status).toBe(503);
+    expect(res.body.code).toBe('SERVICE_UNAVAILABLE');
+  });
+});

@@ -126,7 +126,7 @@ Result on the last run here: **61 tests passing, 94.9% line coverage**, load tes
 
 ### End-to-end browser tests (Playwright)
 
-`e2e/` holds the automated browser tests (Test Plan TC-21 to TC-28 and TC-30). They open a real Chromium browser and drive the app through nginx over HTTPS, the way a student would: register, log in, search for tutors, book, accept, join a group, report and suspend, plus a 360-pixel phone layout check and security checks. Each test creates its own users, so the tests can run again and again on the same database.
+`e2e/` holds the automated browser tests (Test Plan TC-21 to TC-28, TC-30 and TC-31). They open a real Chromium browser and drive the app through nginx over HTTPS, the way a student would: register, log in, search for tutors, book, accept, join a group, report and suspend, plus a 360-pixel phone layout check and security checks. Each test creates its own users, so the tests can run again and again on the same database.
 
 ```bash
 docker compose up --build -d                       # full stack on https://localhost
@@ -149,10 +149,11 @@ The `e2e` job in GitHub Actions runs the same tests on every pull request, and k
 | `tests/responsive.spec.js` | TC-27 Phone layout and 3-click booking | NFR-05, FR-13 |
 | `tests/security.spec.js` | TC-28 HTTPS, headers, no hashes, input validation | SR-01, SR-02, SR-06 |
 | `tests/smart-match.spec.js` | TC-30 Predicted success shown for every match | FR-16 |
+| `tests/admin-models.spec.js` | TC-31 Admin's Smart Match page compares the six models; Learners cannot open it | FR-16, NFR-09 |
 
 ## Smart Match: six prediction models (FR-16)
 
-For every Tutor in the match list, Smart Match shows the predicted chance that the session succeeds (the Tutor accepts and the Learner rates it 4 or 5). The rule-based score still decides the order (FR-07); the prediction breaks ties and helps the Learner choose. If the model service is down, matching works as before without predictions.
+Admins can compare the six models inside the app on the **Smart Match** page (`/admin/models`). For every Tutor in the match list, Smart Match shows the predicted chance that the session succeeds (the Tutor accepts and the Learner rates it 4 or 5). The rule-based score still decides the order (FR-07); the prediction breaks ties and helps the Learner choose. If the model service is down, matching works as before without predictions.
 
 | Family | Model | Accuracy | F1 | ROC-AUC |
 |---|---|---|---|---|

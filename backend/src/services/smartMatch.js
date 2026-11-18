@@ -2,6 +2,7 @@
 // model service (CMP-13, ml/app.py) for the chance that the session succeeds.
 // If the service is not configured, slow or down, matching still works without predictions.
 const config = require('../config');
+const { E } = require('../errors');
 const logger = require('../utils/logger');
 
 const LEVEL = { Beginner: 0, Intermediate: 0.5, Advanced: 1 };
@@ -44,4 +45,21 @@ async function predict(rows, { fetchImpl = globalThis.fetch } = {}) {
   }
 }
 
-module.exports = { features, predict };
+/** The six models and their test scores, for the Admin's Smart Match page (GET /models of CMP-13). */
+async function models({ fetchImpl = globalThis.fetch } = {}) {
+  const { url, timeoutMs } = config.smartMatch;
+  const down = E.unavailable('The Smart Match model service is not available right now.');
+  if (!url) throw down;
+  try {
+    const res = await fetchImpl(`${url}/models`, { signal: AbortSignal.timeout(timeoutMs) });
+    if (!res.ok) throw new Error(`model service answered ${res.status}`);
+    const body = await res.json();
+    if (!Array.isArray(body.models)) throw new Error('bad response shape');
+    return body;
+  } catch (err) {
+    logger.warn('Smart Match model list unavailable', { error: err.message });
+    throw down;
+  }
+}
+
+module.exports = { features, predict, models };

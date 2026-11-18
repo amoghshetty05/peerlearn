@@ -15,6 +15,7 @@ const group = require('../services/group');
 const moderation = require('../services/moderation');
 const notification = require('../services/notification');
 const dashboard = require('../services/dashboard');
+const smartMatch = require('../services/smartMatch');
 
 const router = express.Router();
 const h = (fn) => (req, res, next) => Promise.resolve(fn(req, res)).catch(next); // async error bridge
@@ -77,6 +78,7 @@ router.post('/notifications/read-all', ...guard(...LT), h(async (req, res) => { 
 
 // ---- API-12 / API-13: moderation ----
 router.post('/reports', ...guard(...LT), validate({ body: S.report }), h(async (req, res) => res.status(201).json(await moderation.report(req.user, req.body))));
+router.get('/admin/models', ...guard('admin'), h(async (req, res) => res.json(await smartMatch.models())));
 router.get('/admin/reports', ...guard('admin'), validate({ query: S.reportList }), h(async (req, res) => res.json(await moderation.list(req.query.status))));
 router.patch('/admin/reports/:id', ...guard('admin'), validate({ params: S.idParam, body: S.adminPatch }),
   h(async (req, res) => res.json(await moderation.resolve(req.user, req.params.id, req.body.action))));

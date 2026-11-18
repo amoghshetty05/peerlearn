@@ -13,6 +13,7 @@ import Notifications from './pages/Notifications.jsx';
 import Profile from './pages/Profile.jsx';
 import UserProfile from './pages/UserProfile.jsx';
 import Admin from './pages/Admin.jsx';
+import AdminModels from './pages/AdminModels.jsx';
 
 function Protected({ roles, children }) {
   const { user } = useAuth();
@@ -39,6 +40,7 @@ export default function App() {
         <Route path="users/:id" element={<UserProfile />} />
         <Route path="me" element={<Profile />} />
         <Route path="admin" element={<Protected roles={['admin']}><Admin /></Protected>} />
+        <Route path="admin/models" element={<Protected roles={['admin']}><AdminModels /></Protected>} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
