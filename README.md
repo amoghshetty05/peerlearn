@@ -116,7 +116,7 @@ npm run seed:perf   # 1,000 users / 200 tutors in the dev DB, then:
 npm run load        # TC-18: 100 concurrent users for 60 s (SECONDS=20 for a short run)
 ```
 Result on the last run here: **61 tests passing, 94.9% line coverage**, load test 100% of 2,926 requests under 1 s (p95 106 ms).
-`npm audit --audit-level=high` is clean for both `backend/` and `frontend/` (CI runs it on every PR).
+`npm audit --omit=dev --audit-level=high` (production packages) is clean for both `backend/` and `frontend/`; CI runs it on every PR.
 
 ### End-to-end browser tests (Playwright)
 
