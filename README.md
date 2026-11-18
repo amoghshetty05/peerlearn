@@ -150,17 +150,30 @@ The `e2e` job in GitHub Actions runs the same tests on every pull request, and k
 
 For every Tutor in the match list, Smart Match shows the predicted chance that the session succeeds (the Tutor accepts and the Learner rates it 4 or 5). The rule-based score still decides the order (FR-07); the prediction breaks ties and helps the Learner choose. If the model service is down, matching works as before without predictions.
 
-| Family | Model | ROC-AUC | F1 |
-|---|---|---|---|
-| Baseline | Rule-based score (FR-06) | 0.749 | 0.805 |
-| Machine learning | Logistic Regression (default) | 0.779 | 0.810 |
-| Machine learning | Random Forest | 0.774 | 0.813 |
-| Deep learning | Multilayer Perceptron (Keras) | 0.775 | 0.808 |
-| Deep learning | Wide & Deep Network (Keras) | 0.775 | 0.811 |
-| Quantum | Variational Quantum Classifier (Qiskit, 4 qubits) | 0.681 | 0.771 |
-| Quantum | Quantum Kernel SVM (Qiskit, 4 qubits) | 0.680 | 0.768 |
+| Family | Model | Accuracy | F1 | ROC-AUC |
+|---|---|---|---|---|
+| Baseline | Rule-based score (FR-06) | 0.718 | 0.805 | 0.749 |
+| Machine learning | Logistic Regression (default) | 0.743 | 0.810 | 0.779 |
+| Machine learning | Random Forest | 0.739 | 0.813 | 0.774 |
+| Deep learning | Multilayer Perceptron (Keras) | 0.738 | 0.808 | 0.775 |
+| Deep learning | Wide & Deep Network (Keras) | 0.744 | 0.811 | 0.775 |
+| Quantum | Quantum Kernel SVM (Qiskit, 4 qubits) | 0.732 | 0.806 | 0.757 |
+| Quantum | Variational Quantum Classifier (Qiskit, 4 qubits) | 0.713 | 0.793 | 0.727 |
 
-Test set of 1,200 simulated sessions (seed 2026). The data is simulated because PeerLearn has no real usage history yet; see `ml/README.md` and the Model Comparison Report in `docs/reports`. All four classical models reach the best AUC possible on this data (0.78) and beat the rule-based score; the quantum models, limited to 4 qubits and 400 training rows on a simulator, do not yet.
+Test set of 1,200 simulated sessions (seed 2026). The data is simulated because PeerLearn has no real usage history yet; see `ml/README.md` and the Model Comparison Report in `docs/reports`. All four classical models reach about the best AUC possible on this data (0.78) and beat the rule-based score. The quantum kernel SVM also beats the rule-based score; both quantum models are limited to 4 qubits and 400 training rows on a simulator.
+
+### Comparing the models in MLflow
+
+Every training run is recorded in MLflow (`ml/mlflow.db`, experiment `peerlearn-smart-match`): one parent run with a child run per model, holding its parameters (for example trees, layers, qubits, encoding bandwidth) and metrics (accuracy, precision, recall, F1, ROC-AUC, training time, prediction time).
+
+```bash
+cd ml
+pip install -r requirements-dev.txt
+python train.py                                        # optional: retrain all six (about 4 minutes) and log a new run
+python compare.py                                      # comparison table read back from MLflow
+mlflow ui --backend-store-uri sqlite:///mlflow.db      # open http://localhost:5000 -> peerlearn-smart-match
+```
+In the MLflow UI, expand the training run, tick the seven model runs and click **Compare** for the side-by-side table and charts. With Docker: `docker compose --profile mlflow up mlflow` starts the same UI on http://localhost:5000.
 
 ## Requirement to code to test
 

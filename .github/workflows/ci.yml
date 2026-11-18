@@ -68,6 +68,8 @@ jobs:
       - name: "Model service tests (TC-29)"
         run: python -m pytest -v
         env: { KERAS_BACKEND: jax }
+      - name: "MLflow holds 2 machine learning, 2 deep learning and 2 quantum runs"
+        run: python compare.py --check
 
   # Playwright end-to-end tests (TC-21 to TC-28): start the whole stack with Docker Compose and
   # drive a real Chromium browser through it over HTTPS. The HTML report is kept as an artifact.

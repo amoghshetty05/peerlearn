@@ -10,8 +10,8 @@ highest ROC-AUC on the test data (set `DEFAULT_MODEL` to choose another).
 | Machine learning | Random Forest | `RandomForestModel` |
 | Deep learning (Keras 3, JAX) | Multilayer Perceptron | `MLPModel` |
 | Deep learning (Keras 3, JAX) | Wide & Deep Network | `WideDeepModel` |
+| Quantum (Qiskit, simulated) | Quantum Kernel SVM, 4 qubits (bandwidth chosen by 5-fold CV) | `QSVCModel` |
 | Quantum (Qiskit, simulated) | Variational Quantum Classifier, 4 qubits | `VQCModel` |
-| Quantum (Qiskit, simulated) | Quantum Kernel SVM, 4 qubits | `QSVCModel` |
 
 **Data.** PeerLearn has no real usage history yet, so `smartmatch/simulate.py` generates 6,000
 simulated request-Tutor pairs from stated assumptions (fixed seed 2026), saved in
@@ -26,7 +26,9 @@ Tutor level, time fit, average rating, number of ratings, acceptance rate, workl
 cd ml
 pip install -r requirements-dev.txt
 python -m smartmatch.simulate          # regenerate the data (optional, already committed)
-python train.py                         # train and evaluate all six, writes models/ and metrics.json
+python train.py                         # train and evaluate all six, writes models/, metrics.json and an MLflow run
+python compare.py                       # compare the six from MLflow (add --check to verify all six are there)
+mlflow ui --backend-store-uri sqlite:///mlflow.db   # MLflow UI on http://localhost:5000
 python -m pytest -v                     # service tests (TC-29)
 KERAS_BACKEND=jax uvicorn app:app --port 8000
 curl localhost:8000/models              # the six models and their test results

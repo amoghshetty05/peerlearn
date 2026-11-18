@@ -30,6 +30,9 @@ class Model:
     def predict_proba(self, X):
         raise NotImplementedError
 
+    def params(self):
+        return {}
+
     def save(self, folder):
         joblib.dump(self, os.path.join(folder, f"{self.key}.joblib"))
 
@@ -44,6 +47,9 @@ class LogisticRegressionModel(Model):
         self.pipe.fit(X, y)
         return self
 
+    def params(self):
+        return {"scaling": "standard", "penalty": "l2", "C": 1.0, "max_iter": 1000}
+
     def predict_proba(self, X):
         return self.pipe.predict_proba(X)[:, 1]
 
@@ -57,6 +63,9 @@ class RandomForestModel(Model):
                                           random_state=SEED, n_jobs=-1)
         self.clf.fit(X, y)
         return self
+
+    def params(self):
+        return {"n_estimators": 120, "max_depth": 9, "min_samples_leaf": 8}
 
     def predict_proba(self, X):
         return self.clf.predict_proba(X)[:, 1]
@@ -80,6 +89,11 @@ class _KerasModel(Model):
         self.history = self.net.fit(self._inputs(X), np.asarray(y, dtype=np.float32), epochs=self.epochs,
                                     batch_size=64, validation_split=0.15, callbacks=[stop], verbose=0).history
         return self
+
+    def params(self):
+        return {"framework": "Keras 3 (JAX backend)", "optimizer": "Adam", "learning_rate": 0.001, "batch_size": 64,
+                "max_epochs": self.epochs, "epochs_run": len(self.history.get("loss", [])), "early_stopping": "val_auc, patience 10",
+                "trainable_parameters": int(self.net.count_params()) if self.net is not None else None}
 
     def predict_proba(self, X):
         return np.asarray(self.net.predict(self._inputs(X), verbose=0)).reshape(-1)
@@ -143,21 +157,76 @@ class WideDeepModel(_KerasModel):
 
 
 # ---------------------------------------------------------------- quantum (Qiskit, simulated)
-def _quantum_preprocess():
+ANGLE_SCALES = [np.pi, np.pi / 2, np.pi / 4, np.pi / 8]   # candidate encoding bandwidths
+
+
+def _quantum_preprocess(angle_max=np.pi):
     """8 features -> the 4 most informative ones (ANOVA F-test on the training data) -> angles in
-    [0, pi], one per qubit. (Principal components were tried first: with 8 nearly independent
-    features, 4 components keep only half the information and the quantum models fell to ~0.55 AUC.)"""
+    [0, angle_max], one per qubit. angle_max is the encoding 'bandwidth': smaller values keep similar
+    students' quantum states similar, which stops the kernel from treating every pair as unrelated.
+    (Principal components were tried first: with 8 nearly independent features, 4 components keep
+    only half the information and the quantum models fell to ~0.55 AUC.)"""
     return make_pipeline(StandardScaler(), SelectKBest(f_classif, k=N_QUBITS),
-                         MinMaxScaler(feature_range=(0, np.pi), clip=True))
+                         MinMaxScaler(feature_range=(0, angle_max), clip=True))
+
+
+class QSVCModel(Model):
+    key, name, family = "qsvc", "Quantum Kernel SVM", "Quantum"
+    description = ("Support vector machine whose kernel is the overlap of 4-qubit quantum states from a ZZ "
+                   "feature map, computed on Qiskit's statevector simulator. The encoding bandwidth and the "
+                   "number of feature-map repetitions are chosen by 5-fold cross-validation on the training rows.")
+    train_size = 400
+
+    def _make(self, angle_max, reps):
+        from qiskit.circuit.library import ZZFeatureMap
+        from qiskit_machine_learning.algorithms import QSVC
+        from qiskit_machine_learning.kernels import FidelityStatevectorKernel
+        kernel = FidelityStatevectorKernel(feature_map=ZZFeatureMap(N_QUBITS, reps=reps))
+        return _quantum_preprocess(angle_max), QSVC(quantum_kernel=kernel, probability=True, C=1.0, random_state=SEED)
+
+    def fit(self, X, y):
+        from sklearn.metrics import roc_auc_score
+        from sklearn.model_selection import StratifiedKFold
+        X, y = np.asarray(X), np.asarray(y)
+        folds = list(StratifiedKFold(5, shuffle=True, random_state=SEED).split(X, y))
+        self.cv_results = []
+        for angle_max in ANGLE_SCALES:
+            for reps in (1, 2):
+                aucs = []
+                for tr, va in folds:
+                    prep, qsvc = self._make(angle_max, reps)
+                    prep.fit(X[tr], y[tr])
+                    qsvc.fit(prep.transform(X[tr]), y[tr])
+                    aucs.append(roc_auc_score(y[va], qsvc.predict_proba(prep.transform(X[va]))[:, 1]))
+                self.cv_results.append({"angle_max": float(angle_max), "reps": reps, "cv_auc": float(np.mean(aucs))})
+        best = max(self.cv_results, key=lambda r: r["cv_auc"])
+        self.angle_max, self.reps = best["angle_max"], best["reps"]
+        self.prep, self.qsvc = self._make(self.angle_max, self.reps)
+        self.prep.fit(X, y)
+        self.qsvc.fit(self.prep.transform(X), y)
+        return self
+
+    def params(self):
+        return {"qubits": N_QUBITS, "feature_map": "ZZFeatureMap", "feature_map_reps": self.reps,
+                "angle_max": round(self.angle_max, 4), "C": 1.0, "kernel": "fidelity (statevector)",
+                "selection": "5-fold CV over 4 bandwidths x 2 reps"}
+
+    def predict_proba(self, X):
+        return self.qsvc.predict_proba(self.prep.transform(X))[:, 1]
 
 
 class VQCModel(Model):
     key, name, family = "vqc", "Variational Quantum Classifier", "Quantum"
     description = ("4-qubit circuit: a ZZ feature map encodes the data and a RealAmplitudes circuit with 12 "
                    "trainable rotation angles classifies it; the angles are tuned by COBYLA to minimise "
-                   "cross-entropy. Probabilities come from Qiskit's exact statevector simulator.")
+                   "cross-entropy. Probabilities come from Qiskit's exact statevector simulator. The encoding "
+                   "bandwidth is the one chosen by the kernel model's cross-validation (training a VQC takes "
+                   "about 2 minutes, too slow to cross-validate each setting).")
     train_size = 400
     maxiter = 150
+
+    def __init__(self, angle_max=np.pi):
+        self.angle_max = angle_max
 
     @staticmethod
     def _circuits():
@@ -177,7 +246,7 @@ class VQCModel(Model):
 
     def fit(self, X, y):
         from scipy.optimize import minimize
-        self.prep = _quantum_preprocess().fit(X, y)
+        self.prep = _quantum_preprocess(self.angle_max).fit(X, y)
         angles, y = self.prep.transform(X), np.asarray(y, dtype=float)
         n_weights = self._circuits()[1].num_parameters
         self.loss_curve = []
@@ -192,31 +261,16 @@ class VQCModel(Model):
         self.weights = minimize(loss, start, method="COBYLA", options={"maxiter": self.maxiter, "rhobeg": 0.5}).x
         return self
 
+    def params(self):
+        return {"qubits": N_QUBITS, "feature_map": "ZZFeatureMap", "feature_map_reps": 1,
+                "ansatz": "RealAmplitudes", "ansatz_reps": 2, "trainable_angles": 12,
+                "optimizer": "COBYLA", "maxiter": self.maxiter, "angle_max": round(self.angle_max, 4)}
+
     def predict_proba(self, X):
         return self._p1(self.prep.transform(X), self.weights)
 
 
-class QSVCModel(Model):
-    key, name, family = "qsvc", "Quantum Kernel SVM", "Quantum"
-    description = ("Support vector machine whose kernel is the overlap of 4-qubit quantum states "
-                   "(ZZ feature map, 2 repetitions), computed on Qiskit's statevector simulator.")
-    train_size = 400
-
-    def fit(self, X, y):
-        from qiskit.circuit.library import ZZFeatureMap
-        from qiskit_machine_learning.algorithms import QSVC
-        from qiskit_machine_learning.kernels import FidelityStatevectorKernel
-        self.prep = _quantum_preprocess().fit(X, y)
-        kernel = FidelityStatevectorKernel(feature_map=ZZFeatureMap(N_QUBITS, reps=2))
-        self.qsvc = QSVC(quantum_kernel=kernel, probability=True, C=1.0, random_state=SEED)
-        self.qsvc.fit(self.prep.transform(X), np.asarray(y))
-        return self
-
-    def predict_proba(self, X):
-        return self.qsvc.predict_proba(self.prep.transform(X))[:, 1]
-
-
-ALL = [LogisticRegressionModel, RandomForestModel, MLPModel, WideDeepModel, VQCModel, QSVCModel]
+ALL = [LogisticRegressionModel, RandomForestModel, MLPModel, WideDeepModel, QSVCModel, VQCModel]
 BY_KEY = {m.key: m for m in ALL}
 
 

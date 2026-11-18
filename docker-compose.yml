@@ -40,6 +40,13 @@ services:
   ml:                            # CMP-13 Smart Match model service (FR-16): 2 ML, 2 deep learning, 2 quantum models
     build: { context: ., dockerfile: ml/Dockerfile }
 
+  mlflow:                        # MLflow UI to compare the six models: docker compose --profile mlflow up mlflow
+    image: ghcr.io/mlflow/mlflow:v2.19.0
+    profiles: ["mlflow"]
+    command: mlflow ui --backend-store-uri sqlite:////mlflow/mlflow.db --host 0.0.0.0 --port 5000
+    volumes: ["./ml:/mlflow"]
+    ports: ["5000:5000"]
+
   mailhog:                       # catches outgoing email for the demo: http://localhost:8025
     image: mailhog/mailhog
     ports: ["8025:8025"]
