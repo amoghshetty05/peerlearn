@@ -35,7 +35,8 @@ export default function Matches() {
   return (
     <div className="page">
       <header className="page-head">
-        <div><h1>Your best matches</h1><p className="muted">Top {data.matches.length || 5} tutors by score. Tap a time to ask for that slot.</p></div>
+        <div><h1>Your best matches</h1><p className="muted">Top {data.matches.length || 5} tutors by score. Tap a time to ask for that slot.</p>
+          {data.smartMatch && <p className="muted small">Predicted success by Smart Match ({data.smartMatch.modelName}).</p>}</div>
         <Link to="/find" className="btn ghost">New search</Link>
       </header>
       {data.matches.length === 0
@@ -48,7 +49,8 @@ export default function Matches() {
                 <div>
                   <h3><Link to={`/users/${m.tutorId}`} className="plain">{m.name}</Link></h3>
                   <div className="row gap small"><span className={`level ${m.proficiency}`}>{m.proficiency}</span>
-                    {m.rating.count > 0 ? <span className="row"><Stars value={m.rating.average} size={14} /><span className="muted">{m.rating.average.toFixed(1)} ({m.rating.count})</span></span> : <span className="muted">No ratings yet</span>}</div>
+                    {m.rating.count > 0 ? <span className="row"><Stars value={m.rating.average} size={14} /><span className="muted">{m.rating.average.toFixed(1)} ({m.rating.count})</span></span> : <span className="muted">No ratings yet</span>}
+                    {m.successChance != null && <span className="predict" title="Chance that this session is accepted and rated 4 or 5, predicted by Smart Match">{m.successChance}% predicted success</span>}</div>
                 </div>
               </div>
               <div className="bars">

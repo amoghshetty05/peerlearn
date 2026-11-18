@@ -1,0 +1,5 @@
+# Training report charts and tests (not needed in the running service).
+-r requirements.txt
+matplotlib==3.10.0
+pytest==8.3.4
+httpx==0.28.1

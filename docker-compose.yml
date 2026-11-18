@@ -28,13 +28,17 @@ services:
       SMTP_HOST: ${SMTP_HOST}
       SMTP_PORT: ${SMTP_PORT}
       MAIL_FROM: ${MAIL_FROM}
-    depends_on: { migrate: { condition: service_completed_successfully }, mailhog: { condition: service_started } }
+      ML_URL: http://ml:8000     # FR-16; matching still works if the model service is down
+    depends_on: { migrate: { condition: service_completed_successfully }, mailhog: { condition: service_started }, ml: { condition: service_started } }
 
   web:                           # nginx: TLS 1.2+, HTTP->HTTPS redirect, static SPA, /api proxy
     build: { context: ., dockerfile: frontend/Dockerfile }
     ports: ["80:80", "443:443"]
     volumes: ["./infra/certs:/etc/nginx/certs:ro"]
     depends_on: [api]
+
+  ml:                            # CMP-13 Smart Match model service (FR-16): 2 ML, 2 deep learning, 2 quantum models
+    build: { context: ., dockerfile: ml/Dockerfile }
 
   mailhog:                       # catches outgoing email for the demo: http://localhost:8025
     image: mailhog/mailhog

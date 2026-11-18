@@ -34,6 +34,8 @@ const config = {
     from: env.MAIL_FROM || 'PeerLearn <no-reply@pes.edu>',
   },
   jobsEnabled: env.JOBS_ENABLED !== 'false' && !isTest,
+  // FR-16 Smart Match: URL of the model service (CMP-13). Empty = matching works without predictions.
+  smartMatch: { url: (env.ML_URL || '').replace(/\/$/, ''), timeoutMs: Number(env.ML_TIMEOUT_MS || 2000), model: env.ML_MODEL || '' },
 };
 
 module.exports = config;

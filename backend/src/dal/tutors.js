@@ -46,11 +46,21 @@ exports.matchCandidates = async (subject, isoWeekday, minutes) =>
             COALESCE(r.avg_score, 0)::float AS avg_rating, COALESCE(r.cnt, 0)::int AS rating_count,
             EXISTS (SELECT 1 FROM availability_slots a WHERE a.tutor_id = u.id AND a.weekday = $2
                      AND a.start_time <= make_interval(mins => $3)::time AND a.end_time > make_interval(mins => $3)::time) AS covers,
-            EXISTS (SELECT 1 FROM availability_slots a WHERE a.tutor_id = u.id AND a.weekday = $2) AS same_day
+            EXISTS (SELECT 1 FROM availability_slots a WHERE a.tutor_id = u.id AND a.weekday = $2) AS same_day,
+            COALESCE(st.accepted, 0)::int AS accepted_count, COALESCE(st.answered, 0)::int AS answered_count,
+            COALESCE(ld.upcoming, 0)::int AS upcoming_week
        FROM users u
        JOIN tutor_subjects ts ON ts.tutor_id = u.id AND ts.subject = $1
        LEFT JOIN (SELECT s.tutor_id, avg(rt.score) AS avg_score, count(*) AS cnt
                     FROM ratings rt JOIN sessions s ON s.id = rt.session_id GROUP BY s.tutor_id) r ON r.tutor_id = u.id
+       -- FR-16 Smart Match features: how often the Tutor accepts, and how busy the next 7 days are
+       LEFT JOIN (SELECT tutor_id,
+                         count(*) FILTER (WHERE status IN ('accepted', 'completed')) AS accepted,
+                         count(*) FILTER (WHERE status IN ('accepted', 'completed', 'declined', 'expired')) AS answered
+                    FROM sessions GROUP BY tutor_id) st ON st.tutor_id = u.id
+       LEFT JOIN (SELECT tutor_id, count(*) AS upcoming FROM sessions
+                   WHERE status = 'accepted' AND slot_time >= now() AND slot_time < now() + interval '7 days'
+                   GROUP BY tutor_id) ld ON ld.tutor_id = u.id
       WHERE u.role = 'tutor' AND u.status = 'active'`, [subject, isoWeekday, minutes])).rows;
 
 exports.slotsFor = async (tutorIds) =>
